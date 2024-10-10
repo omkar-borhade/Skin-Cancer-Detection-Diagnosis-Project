@@ -1,4 +1,5 @@
 const cloudinary = require('../config/cloudinary');
+const stream = require('stream'); // Add this line to import the stream module
 
 exports.createPatient = async (data, files) => {
   const patientData = {
@@ -19,7 +20,7 @@ exports.createPatient = async (data, files) => {
     if (files && files.length > 0) {
       for (const file of files) {
         const result = await new Promise((resolve, reject) => {
-          const stream = cloudinary.uploader.upload_stream(
+          const uploadStream = cloudinary.uploader.upload_stream(
             { resource_type: 'auto' },
             (error, result) => {
               if (error) {
@@ -31,8 +32,10 @@ exports.createPatient = async (data, files) => {
             }
           );
 
-          // Ensure file.buffer is used to send the file data
-          stream.end(file.buffer);
+          // Use a PassThrough stream to buffer the file data
+          const bufferStream = new stream.PassThrough();
+          bufferStream.end(file.buffer); // Write the buffer to the stream
+          bufferStream.pipe(uploadStream); // Pipe the buffer stream to the upload stream
         });
 
         // Add the image URL to patientData

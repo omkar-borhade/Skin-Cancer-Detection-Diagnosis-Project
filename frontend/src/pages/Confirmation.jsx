@@ -1,6 +1,6 @@
-// Confirmation.js
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Confirmation = () => {
   const location = useLocation();
@@ -20,36 +20,29 @@ const Confirmation = () => {
 
   const handleConfirm = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/patients/confirm', {
-        method: 'POST',
+      const response = await axios.post('http://localhost:5000/api/patients/confirm', {
+        name,
+        age,
+        sex,
+        bloodGroup,
+        mobileNumber,
+        email,
+        address,
+        familyHistory,
+        symptoms,
+        skinImages,
+      }, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name,
-          age,
-          sex,
-          bloodGroup,
-          mobileNumber,
-          email,
-          address,
-          familyHistory,
-          symptoms,
-          skinImages,
-        }),
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        alert(data.message); // Show success message
-        navigate('/'); // Redirect to home or form
-      } else {
-        alert(`Error: ${data.message}`); // Show error message
-      }
+      alert(response.data.message); // Show success message
+      navigate('/'); // Redirect to home or form
     } catch (error) {
       console.error('Error confirming patient data:', error);
-      alert('Failed to confirm patient data');
+      const errorMessage = error.response?.data?.message || 'Failed to confirm patient data';
+      alert(`Error: ${errorMessage}`); // Show error message
     }
   };
 
