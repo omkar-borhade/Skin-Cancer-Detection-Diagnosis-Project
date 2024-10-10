@@ -20,7 +20,7 @@ const Confirmation = () => {
 
   const handleConfirm = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/patients/confirm', {
+      const response = await axios.post('http://localhost:3000/api/patients/confirm', {
         name,
         age,
         sex,
@@ -36,13 +36,13 @@ const Confirmation = () => {
           'Content-Type': 'application/json',
         },
       });
-
-      alert(response.data.message); // Show success message
-      navigate('/'); // Redirect to home or form
+  
+      alert(response.data.message);
+      navigate('/');
     } catch (error) {
-      console.error('Error confirming patient data:', error);
+      console.error('Error confirming patient data:', error); // Log the full error
       const errorMessage = error.response?.data?.message || 'Failed to confirm patient data';
-      alert(`Error: ${errorMessage}`); // Show error message
+      alert(`Error: ${errorMessage}`);
     }
   };
 

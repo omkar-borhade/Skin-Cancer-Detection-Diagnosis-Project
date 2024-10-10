@@ -1,4 +1,5 @@
 const patientService = require('../services/patientService');
+const Patient = require('../models/Patient.Modal.js');
 
 exports.submitPatientData = async (req, res) => {
   try {
@@ -15,12 +16,14 @@ exports.submitPatientData = async (req, res) => {
 };
 
 exports.confirmPatientData = async (req, res) => {
-  const patientData = req.body;
+  const patientData = req.body; // Get data from request body
 
   try {
+    // Create a new patient record in MongoDB
     const patient = new Patient(patientData);
-    await patient.save();
+    await patient.save(); // Save the patient data
 
+    // Respond with a success message
     res.status(201).json({ message: 'Patient data successfully saved!' });
   } catch (error) {
     console.error('Error saving patient data:', error);

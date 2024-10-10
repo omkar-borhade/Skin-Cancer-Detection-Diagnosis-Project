@@ -30,6 +30,6 @@ router.post('/patients', upload.array('skinImages', 5), async (req, res) => {
     }
 });
 
-router.post('/confirm', patientController.confirmPatientData);
+router.post('/patients/confirm', patientController.confirmPatientData);
 
 module.exports = router;
