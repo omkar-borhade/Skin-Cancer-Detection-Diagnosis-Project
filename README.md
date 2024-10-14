@@ -1,8 +1,7 @@
 #   !!..IN WORKING..!!
 # Skin Cancer Detection and Diagnosis
 
-![Skin Cancer Detection](https://images.unsplash.com/photo-1581487362448-0c7d58c34b52) 
-
+![Skin Cancer Detection](https://via.placeholder.com/800x400.png?text=Skin+Cancer+Detection) 
 
 ## Overview
 
