@@ -1,8 +1,6 @@
 #   !!..IN WORKING..!!
 # Skin Cancer Detection and Diagnosis
-
-![Skin Cancer Detection](https://via.placeholder.com/800x400.png?text=Skin+Cancer+Detection) 
-
+ 
 ## Overview
 
 This project aims to develop a **Skin Cancer Detection and Diagnosis** application that utilizes deep learning techniques to analyze images of skin lesions. The application provides users with the ability to upload images, receive diagnostic predictions, and access information about nearby dermatologists and oncologists.
@@ -13,8 +11,8 @@ This project aims to develop a **Skin Cancer Detection and Diagnosis** applicati
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+
+
 
 ## Technologies Used
 
