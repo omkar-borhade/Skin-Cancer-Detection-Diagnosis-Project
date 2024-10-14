@@ -3,30 +3,31 @@ import React from 'react';
 
 const doctorsData = [
   {
-    name: "Dr. John Smith",
-    specialty: "Dermatologist",
-    description: "Expert in skin cancer screening and treatment. Dr. Smith has over 10 years of experience in dermatology and a passion for patient care.",
-    imageUrl: "https://via.placeholder.com/150" // Replace with actual image URL
-  },
-  {
-    name: "Dr. Emily Johnson",
+    name: "Dr. Mukul Gharote",
     specialty: "Oncologist",
-    description: "Specializes in cancer treatment and management. Dr. Johnson is dedicated to providing comprehensive care and support to patients.",
-    imageUrl: "https://via.placeholder.com/150" // Replace with actual image URL
+    description: "20 years of experience in oncology with expertise in hematologic and pediatric oncology. Dr. Mukul Gharote holds an MBBS, DM - Oncology, and MD - General Medicine, offering specialized care for cancer patients.",
+    imageUrl: "/image/dr.mukul Gharote.png" // Replace with actual image URL
   },
   {
-    name: "Dr. Michael Brown",
-    specialty: "General Practitioner",
-    description: "Provides holistic care and preventative services. Dr. Brown emphasizes early detection and patient education.",
-    imageUrl: "https://via.placeholder.com/150" // Replace with actual image URL
+    name: "Dr. Bhushan Nemade",
+    specialty: "Oncologist",
+    description: "21 years of experience in radiation oncology. Dr. Bhushan Nemade has an MD in Radiation Oncology from Tata Memorial Hospital, Mumbai, and a Professional Diploma in Clinical Research (PDCR). He is also an MBBS graduate from Mumbai University.",
+    imageUrl: "/image/dr.bhushan nemade.jpeg" // Replace with actual image URL
   },
   {
-    name: "Dr. Sarah Davis",
-    specialty: "Surgeon",
-    description: "Skilled in surgical interventions for skin cancer. Dr. Davis is committed to achieving the best outcomes for her patients.",
-    imageUrl: "https://via.placeholder.com/150" // Replace with actual image URL
+    name: "Dr. Bhushan Wani",
+    specialty: "Oncologist",
+    description: "11 years of experience as a surgical oncologist. Dr. Bhushan Wani holds an M.Ch from the Homi Bhabha National Institute and practices at Sai Shree Super Speciality Hospital and Research Centre, Nashik.",
+    imageUrl: "/image/dr.bhushan wani.jpg" // Replace with actual image URL
+  },
+  {
+    name: "Dr. Chandrashekhar Pethe",
+    specialty: "Medical Oncologist & Hemato-Oncologist",
+    description: "Over 10 years of experience in adult and childhood cancer care, specializing in childhood cancers like leukemias and lymphomas. Dr. Chandrashekhar Pethe is a senior consultant at MOC Nashik (Hope-MOC) with a focus on highly curable childhood cancers.",
+    imageUrl: "/image/Dr-Chandrashekhar_Pethe.png" // Replace with actual image URL
   },
 ];
+
 
 const Doctors = () => {
   return (

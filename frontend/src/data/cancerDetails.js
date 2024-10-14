@@ -1,4 +1,3 @@
-// src/data/cancerDetails.js
 export const cancerDetails = {
     1: {
         name: "Melanoma",
@@ -9,8 +8,8 @@ export const cancerDetails = {
         treatment: "Treatment options include surgery, immunotherapy, targeted therapy, radiation therapy, and chemotherapy.",
         image: "/image/Melanoma.jpg",
         doctors: [
-            { name: "Dr. John Smith", location: "City Hospital, New York", specialization: "Oncologist" },
-            { name: "Dr. Jane Doe", location: "Skin Care Center, Los Angeles", specialization: "Dermatologist" }
+            { name: "Dr. Mukul Gharote", location: "Sai Shree Super Speciality Hospital, Nashik", specialization: "Oncologist" },
+            { name: "Dr. Bhushan Nemade", location: "Tata Memorial Hospital, Mumbai", specialization: "Radiation Oncologist" }
         ]
     },
     2: {
@@ -22,8 +21,8 @@ export const cancerDetails = {
         treatment: "Treatment usually involves surgical removal, cryotherapy, or topical medications.",
         image: "/image/basal_cell_carcinoma.jpg",
         doctors: [
-            { name: "Dr. Sarah Lee", location: "Sunshine Clinic, San Francisco", specialization: "Dermatologist" },
-            { name: "Dr. Robert Green", location: "Cancer Care Center, Houston", specialization: "Oncologist" }
+            { name: "Dr. Mukul Gharote", location: "Sai Shree Super Speciality Hospital, Nashik", specialization: "Oncologist" },
+            { name: "Dr. Bhushan Nemade", location: "Tata Memorial Hospital, Mumbai", specialization: "Radiation Oncologist" }
         ]
     },
     3: {
@@ -35,8 +34,8 @@ export const cancerDetails = {
         treatment: "Surgery is the most common treatment. In some cases, radiation or topical chemotherapy may be used.",
         image: "/image/Squamous-cell-carcinoma.jpg",
         doctors: [
-            { name: "Dr. Emily Davis", location: "Medical Center, Miami", specialization: "Dermatologist" },
-            { name: "Dr. Michael Brown", location: "Cancer Institute, Chicago", specialization: "Oncologist" }
+            { name: "Dr. Mukul Gharote", location: "Sai Shree Super Speciality Hospital, Nashik", specialization: "Oncologist" },
+            { name: "Dr. Bhushan Nemade", location: "Tata Memorial Hospital, Mumbai", specialization: "Radiation Oncologist" }
         ]
     },
     4: {
@@ -48,8 +47,8 @@ export const cancerDetails = {
         treatment: "Treatment often involves surgical removal, radiation therapy, and may include chemotherapy for advanced cases.",
         image: "/image/Merkel-Cell-Carcinoma.jpg",
         doctors: [
-            { name: "Dr. Alice Thompson", location: "Hope Cancer Center, Seattle", specialization: "Oncologist" },
-            { name: "Dr. James Wilson", location: "Skin Health Clinic, Boston", specialization: "Dermatologist" }
+            { name: "Dr. Mukul Gharote", location: "Sai Shree Super Speciality Hospital, Nashik", specialization: "Oncologist" },
+            { name: "Dr. Bhushan Nemade", location: "Tata Memorial Hospital, Mumbai", specialization: "Radiation Oncologist" }
         ]
     },
     5: {
@@ -61,8 +60,8 @@ export const cancerDetails = {
         treatment: "Treatment options include antiretroviral therapy for HIV-positive patients, chemotherapy, and radiation therapy.",
         image: "/image/KaposiSarcoma.jpg",
         doctors: [
-            { name: "Dr. Laura Martinez", location: "Cancer Treatment Center, San Diego", specialization: "Oncologist" },
-            { name: "Dr. Robert Black", location: "Metropolitan Health Clinic, New York", specialization: "Dermatologist" }
+            { name: "Dr. Mukul Gharote", location: "Sai Shree Super Speciality Hospital, Nashik", specialization: "Oncologist" },
+            { name: "Dr. Bhushan Nemade", location: "Tata Memorial Hospital, Mumbai", specialization: "Radiation Oncologist" }
         ]
     },
     6: {
@@ -74,8 +73,8 @@ export const cancerDetails = {
         treatment: "Treatment typically involves surgical excision and regular monitoring for changes.",
         image: "/image/atypical melanocytic neoplasm.jpg",
         doctors: [
-            { name: "Dr. Susan Young", location: "Premier Skin Clinic, Atlanta", specialization: "Dermatologist" },
-            { name: "Dr. David Carter", location: "Oncology Group, Philadelphia", specialization: "Oncologist" }
+            { name: "Dr. Mukul Gharote", location: "Sai Shree Super Speciality Hospital, Nashik", specialization: "Oncologist" },
+            { name: "Dr. Bhushan Nemade", location: "Tata Memorial Hospital, Mumbai", specialization: "Radiation Oncologist" }
         ]
     },
     7: {
@@ -87,8 +86,8 @@ export const cancerDetails = {
         treatment: "Treatment may involve topical chemotherapy, cryotherapy, or photodynamic therapy.",
         image: "/image/Actinic.jpg",
         doctors: [
-            { name: "Dr. Karen White", location: "Family Health Clinic, Dallas", specialization: "Dermatologist" },
-            { name: "Dr. Robert Gray", location: "Skin Institute, Seattle", specialization: "Oncologist" }
+            { name: "Dr. Mukul Gharote", location: "Sai Shree Super Speciality Hospital, Nashik", specialization: "Oncologist" },
+            { name: "Dr. Bhushan Nemade", location: "Tata Memorial Hospital, Mumbai", specialization: "Radiation Oncologist" }
         ]
     },
     8: {
@@ -100,8 +99,8 @@ export const cancerDetails = {
         treatment: "Treatment typically involves surgical removal of the affected tissue, and in some cases, additional treatments for breast cancer.",
         image: "/image/paget.jpg",
         doctors: [
-            { name: "Dr. Laura Green", location: "Women's Health Center, Chicago", specialization: "Oncologist" },
-            { name: "Dr. Mark Harris", location: "Breast Cancer Institute, San Francisco", specialization: "Surgeon" }
+            { name: "Dr. Mukul Gharote", location: "Sai Shree Super Speciality Hospital, Nashik", specialization: "Oncologist" },
+            { name: "Dr. Bhushan Nemade", location: "Tata Memorial Hospital, Mumbai", specialization: "Radiation Oncologist" }
         ]
     }
 };

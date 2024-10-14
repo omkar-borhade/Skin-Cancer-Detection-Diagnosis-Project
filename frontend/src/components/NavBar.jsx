@@ -1,15 +1,17 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux'; // Use Redux hooks
-import { logoutSuccess } from '../features/auth/authSlice'; // Import logout action
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutSuccess } from '../features/auth/authSlice';
 
 function Navbar() {
-  const dispatch = useDispatch(); // Dispatch function
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn); // Get login status from Redux
-  const user = useSelector((state) => state.auth.user); // Get user data from Redux
+  const dispatch = useDispatch();
+  const navigate = useNavigate(); // Use useNavigate hook
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const user = useSelector((state) => state.auth.user);
 
   const handleLogout = () => {
-    dispatch(logoutSuccess()); // Dispatch the logout action to Redux
+    dispatch(logoutSuccess());
+    navigate('/'); // Redirect to homepage after logout
   };
 
   return (

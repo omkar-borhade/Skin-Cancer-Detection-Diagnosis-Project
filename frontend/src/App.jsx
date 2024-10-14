@@ -8,6 +8,7 @@ import AboutUs from './pages/AboutUs';
 import Navbar from './components/NavBar';
 import Footer from './components/Footer';
 import Profile from './pages/Profile';
+import CancerDetail from './components/CancerDetail';
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
               <Route path="/about" element={<AboutUs />} />
               <Route path="/test-skin-cancer" element={<TestSkinCancer />} />
               <Route path="/doctors" element={<Doctors />} />
+              <Route path="/cancer/:id" element={<CancerDetail />} />
               <Route path="/login" element={<Login />} />
               <Route path="/profile" element={<Profile />} /> 
             </Routes>
