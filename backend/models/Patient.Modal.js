@@ -1,12 +1,9 @@
 // models/Patient.js
 const mongoose = require('mongoose');
-
-// Custom validator to ensure max 5 images can be uploaded
 function arrayLimit(val) {
   return val.length <= 5;
 }
 
-// Define the schema for storing patient details
 const patientSchema = new mongoose.Schema({
   name: {
     type: String,

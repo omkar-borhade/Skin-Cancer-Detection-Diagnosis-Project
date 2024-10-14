@@ -9,6 +9,7 @@ import Navbar from './components/NavBar';
 import Footer from './components/Footer';
 import Profile from './pages/Profile';
 import CancerDetail from './components/CancerDetail';
+import Confirmation from './pages/Confirmation'; 
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
               <Route path="/test-skin-cancer" element={<TestSkinCancer />} />
               <Route path="/doctors" element={<Doctors />} />
               <Route path="/cancer/:id" element={<CancerDetail />} />
+              <Route path="/confirmation" element={<Confirmation />} />
               <Route path="/login" element={<Login />} />
               <Route path="/profile" element={<Profile />} /> 
             </Routes>
