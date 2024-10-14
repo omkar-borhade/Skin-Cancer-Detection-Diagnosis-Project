@@ -1,7 +1,7 @@
 # Skin Cancer Detection and Diagnosis
 
 
-![Skin Cancer Detection](https://www.cdc.gov/cancer/dcpc/resources/features/skin-cancer/images/skin-cancer.jpg) <!-- Example image from CDC -->
+![Skin Cancer Detection](https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Skin_cancer_3.jpg/800px-Skin_cancer_3.jpg) <!-- Image of skin cancer -->
 
 ## Overview
 
@@ -45,4 +45,4 @@ This project aims to develop a **Skin Cancer Detection and Diagnosis** applicati
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/omkar-borhade/skin-cancer-detection.git
+   git clone https://github.com/omkar-borhade/Skin-Cancer-Detection-Diagnosis-Project.git
