@@ -1,36 +1,48 @@
-# Skin Cancer Detection and Diagnosis using Deep Learning
+# Skin Cancer Detection and Diagnosis
+
+
+![Skin Cancer Detection](https://www.cdc.gov/cancer/dcpc/resources/features/skin-cancer/images/skin-cancer.jpg) <!-- Example image from CDC -->
+
+## Overview
+
+This project aims to develop a **Skin Cancer Detection and Diagnosis** application that utilizes deep learning techniques to analyze images of skin lesions. The application provides users with the ability to upload images, receive diagnostic predictions, and access information about nearby dermatologists and oncologists.
 
 ## Table of Contents
-- [Introduction](#introduction)
+
 - [Technologies Used](#technologies-used)
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Dataset](#dataset)
-- [Model Training](#model-training)
+- [Contributing](#contributing)
 - [License](#license)
-- [Acknowledgments](#acknowledgments)
-
-## Introduction
-This project aims to develop a web-based application for the detection and diagnosis of skin cancer using deep learning techniques. The application leverages Convolutional Neural Networks (CNNs) for image classification to identify potential skin cancer lesions and provide users with recommendations for nearby dermatologists.
 
 ## Technologies Used
-- **Frontend:** React, Tailwind CSS
-- **Backend:** Node.js, Express
-- **Database:** MongoDB
-- **Deep Learning Framework:** TensorFlow/Keras
-- **Deployment:** (e.g., Heroku, AWS)
+
+- **Frontend:** 
+  - React
+  - Tailwind CSS
+- **Backend:** 
+  - Node.js
+  - Express.js
+  - MongoDB
+- **Deep Learning Framework:** 
+  - TensorFlow / Keras (specify which one you are using)
+- **Image Storage:** 
+  - Cloudinary
+- **API Integration:** 
+  - Lybrate (for finding dermatologists and oncologists)
 
 ## Features
+
 - Upload images of skin lesions for analysis.
-- Classify images as benign or malignant.
-- Provide a list of nearby dermatologists based on user location.
-- Suggest precautions and next steps for the user.
+- Deep learning model for skin cancer prediction.
+- Access a list of nearby dermatologists and oncologists.
+- User authentication and management.
+- Responsive design for mobile and desktop.
 
 ## Installation
-To run this project locally, follow these steps:
 
-1. Clone the repository:
+1. **Clone the repository:**
+
    ```bash
-   git clone https://github.com/yourusername/skin-cancer-detection.git
-   cd skin-cancer-detection
+   git clone https://github.com/omkar-borhade/skin-cancer-detection.git
