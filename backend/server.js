@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const patientRoutes = require('./routes/PatientRoutes');
+const userRoutes = require('./routes/userRoutes'); // Make sure to import user routes
 const errorHandler = require('./middlewares/errorHandler');
 
 // Connect to MongoDB
@@ -20,7 +21,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api', patientRoutes);
+app.use('/api', userRoutes);     // Register user routes
+app.use('/api', patientRoutes);  // Register patient routes
 
 // Error handling middleware
 app.use(errorHandler);

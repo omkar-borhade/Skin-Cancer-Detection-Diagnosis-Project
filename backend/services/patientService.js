@@ -46,11 +46,11 @@ exports.createPatient = async (data, files) => {
     // Log the patient data before returning
     console.log('Patient Data to be used:', patientData);
 
-    // Return the patient data without saving it to the database
-    return patientData; // Return the prepared patient data for the next page
+    // Return the patient data for saving in the controller
+    return patientData; 
   } catch (error) {
     // Log the detailed error before throwing
     console.error('Error preparing patient data:', error);
-    throw new Error('Error preparing patient data: ' + error.message); // Include error details in the message
+    throw new Error('Error preparing patient data: ' + error.message);
   }
 };

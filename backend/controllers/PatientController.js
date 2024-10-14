@@ -4,13 +4,17 @@ const Patient = require('../models/Patient.Modal.js');
 exports.submitPatientData = async (req, res) => {
   try {
     const patientData = await patientService.createPatient(req.body, req.files);
-    
+
+    // Save the patient data in the database
+    const patient = new Patient(patientData);
+    await patient.save(); // Save the patient data in MongoDB
+
     res.status(201).json({
       message: 'Patient data submitted successfully',
-      patient: patientData
+      patient: patientData,
     });
   } catch (error) {
-    console.error('Error submitting patient data:', error); 
+    console.error('Error submitting patient data:', error);
     res.status(500).json({ message: 'Error submitting patient data', error: error.message });
   }
 };

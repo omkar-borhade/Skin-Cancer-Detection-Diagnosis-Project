@@ -1,5 +1,5 @@
 // src/pages/Home.jsx
-import React from 'react';
+
 import Carousel from '../components/Carousel';
 import SkinCancerCard from '../components/SkinCancerCard';
 import { cancerDetails } from '../data/cancerDetails'; // Import the cancer details
