@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const Confirmation = () => {
   const location = useLocation();
@@ -18,7 +19,18 @@ const Confirmation = () => {
     skinImages,
   } = location.state || {};
 
+  const [captchaToken, setCaptchaToken] = useState(null);  // State to store CAPTCHA token
+
+  const onCaptchaChange = (token) => {
+    setCaptchaToken(token);  // Store the CAPTCHA token
+  };
+
   const handleConfirm = async () => {
+    if (!captchaToken) {
+      alert('Please complete the CAPTCHA');
+      return;
+    }
+
     try {
       const response = await axios.post('http://localhost:3000/api/patients/confirm', {
         name,
@@ -31,16 +43,17 @@ const Confirmation = () => {
         familyHistory,
         symptoms,
         skinImages,
+        captchaToken,  // Include the CAPTCHA token
       }, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
-  
+
       alert(response.data.message);
       navigate('/');
     } catch (error) {
-      console.error('Error confirming patient data:', error); // Log the full error
+      console.error('Error confirming patient data:', error);
       const errorMessage = error.response?.data?.message || 'Failed to confirm patient data';
       alert(`Error: ${errorMessage}`);
     }
@@ -82,13 +95,27 @@ const Confirmation = () => {
           <p>No data submitted. Please go back to the form.</p>
         )}
 
+        {/* reCAPTCHA Component */}
         <div className="mt-4">
-          <button 
-            onClick={handleConfirm} 
-            className="bg-green-500 text-white py-2 px-4 rounded mr-2"
-          >
-            Confirm
-          </button>
+          <ReCAPTCHA
+            sitekey="6LceDGIqAAAAADrHzceCTMGzQfNouvz-i2S0Kus3"  // Replace with your actual site key
+            onChange={onCaptchaChange}
+          />
+        </div>
+
+        {/* Confirm button only shows when CAPTCHA is verified */}
+        {captchaToken && (
+          <div className="mt-4">
+            <button 
+              onClick={handleConfirm} 
+              className="bg-green-500 text-white py-2 px-4 rounded mr-2"
+            >
+              Confirm
+            </button>
+          </div>
+        )}
+
+        <div className="mt-4">
           <button 
             onClick={() => navigate('/')} 
             className="bg-blue-500 text-white py-2 px-4 rounded"
@@ -99,6 +126,6 @@ const Confirmation = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Confirmation;
