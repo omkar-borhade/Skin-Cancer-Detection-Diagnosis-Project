@@ -15,29 +15,22 @@ const patientSchema = new mongoose.Schema({
   },
   sex: {
     type: String,
-    enum: ['Male', 'Female', 'Other'], // Gender options
     required: true,
   },
   bloodGroup: {
     type: String,
-    enum: ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'], // Blood group options
     required: true,
   },
   mobileNumber: {
     type: String,
     required: true,
-    validate: {
-      validator: function(v) {
-        return /^\d{10}$/.test(v);
-      },
-      message: props => `${props.value} is not a valid mobile number!`,
-    },
+    
   },
   email: {
     type: String,
     required: true,
-    unique: true, // Ensure unique email
-    match: [/\S+@\S+\.\S+/, 'Please enter a valid email'], // Email validation
+    unique: true, 
+    
   },
   address: {
     type: String,
@@ -46,7 +39,7 @@ const patientSchema = new mongoose.Schema({
   skinImages: {
     type: [String], // Array of strings to store image URLs
     required: true,
-    validate: [arrayLimit, '{PATH} exceeds the limit of 5 images'], // Limit to 5 images
+   
   },
   familyHistory: {
     type: Boolean,
@@ -55,7 +48,7 @@ const patientSchema = new mongoose.Schema({
   symptoms: {
     type: String,
     required: true,
-    maxlength: 500, // Optional: limit description length to 500 characters
+    maxlength: 500, 
   },
 }, {
   timestamps: true, // Automatically add createdAt and updatedAt fields

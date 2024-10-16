@@ -68,14 +68,14 @@ const Confirmation = () => {
           </button>
         </div>
 
-        <div className="mt-4">
+        {/* <div className="mt-4">
           <button 
             onClick={() => navigate('/')} 
             className="bg-blue-500 text-white py-2 px-4 rounded"
           >
             Back to Form
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );
