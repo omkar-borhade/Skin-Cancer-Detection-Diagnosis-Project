@@ -3,6 +3,7 @@ import { FaUser, FaPhone, FaEnvelope, FaMapMarkerAlt, FaFileUpload, FaCheckCircl
 import FormBG from '/image/FormBG.jpg'; // Adjust the path as necessary
 import axios from 'axios'; // Import Axios
 import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import ReCAPTCHA from 'react-google-recaptcha';
 
 function TestSkinCancer() {
   const [name, setName] = useState('');
@@ -81,6 +82,20 @@ function TestSkinCancer() {
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     setSkinImages(files); // Store selected files directly
+  };
+
+  const [captchaToken, setCaptchaToken] = useState(null);  // State to store CAPTCHA token
+
+  const onCaptchaChange = (token) => {
+    setCaptchaToken(token);  // Store the CAPTCHA token
+  };
+
+  
+  const handleConfirm = async () => {
+    if (!captchaToken) {
+      alert('Please complete the CAPTCHA');
+      return;
+    };
   };
 
   return (
@@ -246,10 +261,24 @@ function TestSkinCancer() {
             aria-label="Symptoms Description"
           />
 
-          {/* Submit Button */}
-          <button type="submit" className="bg-blue-500 text-white py-2 rounded">
-            Submit
-          </button>
+          {/* reCAPTCHA Component */}
+        <div className="mt-4">
+          <ReCAPTCHA
+            sitekey="6LceDGIqAAAAADrHzceCTMGzQfNouvz-i2S0Kus3"  // Replace with your actual site key
+            onChange={onCaptchaChange}
+          />
+        </div>
+
+      {/* Submit Button */}
+         {captchaToken && (
+          <button type="submit"  onClick={handleConfirm} className="bg-blue-500 text-white py-2 rounded">
+          Submit
+        </button>
+          
+        )}
+
+          
+          
         </form>
       </div>
     </div>

@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import ReCAPTCHA from 'react-google-recaptcha';
 
 const Confirmation = () => {
   const location = useLocation();
@@ -19,44 +17,10 @@ const Confirmation = () => {
     skinImages,
   } = location.state || {};
 
-  const [captchaToken, setCaptchaToken] = useState(null);  // State to store CAPTCHA token
-
-  const onCaptchaChange = (token) => {
-    setCaptchaToken(token);  // Store the CAPTCHA token
-  };
-
-  const handleConfirm = async () => {
-    if (!captchaToken) {
-      alert('Please complete the CAPTCHA');
-      return;
-    }
-
-    try {
-      const response = await axios.post('http://localhost:3000/api/patients/confirm', {
-        name,
-        age,
-        sex,
-        bloodGroup,
-        mobileNumber,
-        email,
-        address,
-        familyHistory,
-        symptoms,
-        skinImages,
-        captchaToken,  // Include the CAPTCHA token
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      alert(response.data.message);
-      navigate('/');
-    } catch (error) {
-      console.error('Error confirming patient data:', error);
-      const errorMessage = error.response?.data?.message || 'Failed to confirm patient data';
-      alert(`Error: ${errorMessage}`);
-    }
+  const handleConfirm = () => {
+    alert('Thank you! Testing will start.');
+    // Navigate to the image testing page
+    navigate('/test-images', { state: { skinImages } });
   };
 
   return (
@@ -95,25 +59,14 @@ const Confirmation = () => {
           <p>No data submitted. Please go back to the form.</p>
         )}
 
-        {/* reCAPTCHA Component */}
         <div className="mt-4">
-          <ReCAPTCHA
-            sitekey="6LceDGIqAAAAADrHzceCTMGzQfNouvz-i2S0Kus3"  // Replace with your actual site key
-            onChange={onCaptchaChange}
-          />
+          <button 
+            onClick={handleConfirm} 
+            className="bg-green-500 text-white py-2 px-4 rounded mr-2"
+          >
+            Confirm
+          </button>
         </div>
-
-        {/* Confirm button only shows when CAPTCHA is verified */}
-        {captchaToken && (
-          <div className="mt-4">
-            <button 
-              onClick={handleConfirm} 
-              className="bg-green-500 text-white py-2 px-4 rounded mr-2"
-            >
-              Confirm
-            </button>
-          </div>
-        )}
 
         <div className="mt-4">
           <button 
