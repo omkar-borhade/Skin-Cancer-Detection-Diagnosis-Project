@@ -12,7 +12,10 @@ dist
 dist-ssr
 *.local
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -25,6 +28,7 @@ dist-ssr
 *.sw?
 .env
 *.env
+<<<<<<< HEAD
 env*
 
 
@@ -33,3 +37,6 @@ uploads*
 # remember to changer it
 scripts*
 *.scripts
+=======
+env*
+>>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6

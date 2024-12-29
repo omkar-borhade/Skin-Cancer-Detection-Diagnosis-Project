@@ -2,7 +2,11 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { cancerDetails } from '../data/cancerDetails'; // Adjust the path as necessary
+<<<<<<< HEAD
 import NearbyDoctors from '../components/NearbyDoctors';
+=======
+
+>>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
 function CancerDetail() {
   const { id } = useParams();  // Get the cancer type ID from the route parameters
 
@@ -43,7 +47,11 @@ function CancerDetail() {
       </div>
 
       {/* Doctors Section */}
+<<<<<<< HEAD
       {/* <div className="mt-12">
+=======
+      <div className="mt-12">
+>>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
         <h3 className="text-2xl font-semibold mb-4">Nearby Doctors</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {cancer.doctors.map((doctor, index) => (
@@ -54,8 +62,12 @@ function CancerDetail() {
             </div>
           ))}
         </div>
+<<<<<<< HEAD
       </div> */}
        <NearbyDoctors/>
+=======
+      </div>
+>>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
     </div>
   );
 }

@@ -20,9 +20,13 @@ import CommunitySupport from './pages/CommunitySupport';
 import NewPatients from './pages/NewPatients';
 import ContactUS from './pages/ContactUs';
 import TestImage from './pages/test-images';
+<<<<<<< HEAD
 import NearbyDoctors from './components/NearbyDoctors';
 
 
+=======
+TestImage
+>>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
 
 
 
@@ -38,7 +42,10 @@ function App() {
               <Route path="/about" element={<AboutUs />} />
               <Route path="/test-skin-cancer" element={<TestSkinCancer />} />
               <Route path="/doctors" element={<Doctors />} />
+<<<<<<< HEAD
               <Route path="/nearby" element={<NearbyDoctors />} />
+=======
+>>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
               <Route path="/cancer/:id" element={<CancerDetail />} />
               <Route path="/confirmation" element={<Confirmation />} />
               <Route path="/test-images" element={<TestImage />} />

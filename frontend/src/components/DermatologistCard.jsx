@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect } from 'react';
 
 const DermatologistCard = ({ dermatologist, userLocation }) => {
@@ -61,6 +62,20 @@ const DermatologistCard = ({ dermatologist, userLocation }) => {
         <p className="text-sm text-gray-500">Contact: {dermatologist.contact}</p>
       </div>
       <div id={`map${dermatologist.id}`} className="md:w-1/2 w-full h-96 rounded-md mt-4 md:mt-0 shadow-lg"></div>
+=======
+import React from 'react';
+
+const DermatologistCard = ({ hospital }) => {
+  return (
+    <div className="border p-4 mb-4 rounded-lg shadow-lg">
+      <h2 className="font-bold text-lg">{hospital.name}</h2>
+      <p className="text-gray-700">{hospital.address}</p>
+      <img
+        src={hospital.photo}
+        alt={hospital.name}
+        className="w-24 h-24 object-cover rounded-full mt-2"
+      />
+>>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
     </div>
   );
 };

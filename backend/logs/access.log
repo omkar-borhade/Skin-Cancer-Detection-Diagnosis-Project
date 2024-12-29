@@ -1,0 +1,20 @@
+{"level":"info","message":"Server is running on port 3000","timestamp":"2024-10-10T10:44:51.744Z"}
+{"level":"info","message":"Server is running on port 3000","timestamp":"2024-10-10T10:50:40.097Z"}
+{"level":"info","message":"Server is running on port 3000","timestamp":"2024-10-10T10:57:04.359Z"}
+{"level":"info","message":"Server is running on port 3000","timestamp":"2024-10-10T11:49:04.546Z"}
+{"level":"info","message":"GET /api/hospitals?lat=19.98848&lon=73.7837056 200","timestamp":"2024-10-12T07:12:44.151Z"}
+{"level":"info","message":"GET /api/hospitals?lat=19.98848&lon=73.7837056 200","timestamp":"2024-10-12T07:12:57.658Z"}
+{"level":"info","message":"GET /api/hospitals?lat=19.98848&lon=73.7837056 200","timestamp":"2024-10-12T07:12:58.492Z"}
+{"level":"info","message":"GET /api/hospitals?lat=19.98848&lon=73.7837056 200","timestamp":"2024-10-12T09:26:41.078Z"}
+{"level":"info","message":"GET /api/hospitals?lat=19.98848&lon=73.7837056 200","timestamp":"2024-10-12T09:26:43.279Z"}
+{"level":"info","message":"GET /api/hospitals?lat=19.98848&lon=73.7837056 200","timestamp":"2024-10-12T09:30:03.645Z"}
+{"level":"info","message":"GET /api/hospitals?lat=19.98848&lon=73.7837056 200","timestamp":"2024-10-12T09:30:07.563Z"}
+{"level":"info","message":"GET /api/hospitals?lat=19.98848&lon=73.7837056 200","timestamp":"2024-10-12T09:30:49.254Z"}
+{"level":"info","message":"GET /api/hospitals?lat=19.98848&lon=73.7837056 200","timestamp":"2024-10-12T09:30:51.095Z"}
+{"level":"info","message":"GET /api/hospitals?lat=19.98848&lon=73.7837056 200","timestamp":"2024-10-12T09:30:53.908Z"}
+{"level":"info","message":"GET /api/hospitals?lat=19.98848&lon=73.7837056 200","timestamp":"2024-10-12T09:30:54.355Z"}
+{"level":"info","message":"GET /api/hospitals?lat=19.98848&lon=73.7837056 200","timestamp":"2024-10-12T09:32:08.696Z"}
+{"level":"info","message":"GET /api/hospitals?lat=19.98848&lon=73.7837056 200","timestamp":"2024-10-12T09:32:09.933Z"}
+{"level":"info","message":"GET /api/hospitals?lat=19.98848&lon=73.7837056 200","timestamp":"2024-10-12T09:32:12.567Z"}
+{"level":"info","message":"GET /api/hospitals?lat=19.98848&lon=73.7837056 200","timestamp":"2024-10-12T09:36:13.150Z"}
+{"level":"info","message":"GET /api/hospitals?lat=19.98848&lon=73.7837056 200","timestamp":"2024-10-12T09:36:14.429Z"}

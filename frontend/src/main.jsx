@@ -6,6 +6,7 @@ import store from './store/store'; // Import the Redux store correctly
 import App from './App';
 import './index.css';
 
+<<<<<<< HEAD
 // Dynamically load the Google Maps API script
 const apiKey = import.meta.env.VITE_PLACES_API_KEY;
 console.log("Google Maps API Key:", apiKey);
@@ -27,6 +28,8 @@ const loadGoogleMapsScript = () => {
 loadGoogleMapsScript();
 
 // The rest of your app initialization
+=======
+>>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
 
