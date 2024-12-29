@@ -1,21 +1,14 @@
-<<<<<<< HEAD
 import React, { useState } from 'react';
 import imageCompression from 'browser-image-compression';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Import axios
-=======
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
->>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
 
 const Confirmation = () => {
   const location = useLocation();
   const navigate = useNavigate();
-<<<<<<< HEAD
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const formData = location.state; // Get the form data from the state
-
 
   const handleConfirm = async () => {
     setLoading(true);
@@ -81,7 +74,12 @@ const Confirmation = () => {
       if (response.status === 201) {
         // Handle successful submission
         alert('Data successfully submitted!');
-        navigate('/test-images'); // Navigate to a success page (optional)
+        navigate('/test-images', {
+          state: {
+            skinImages: formData.skinImages,
+            prediction: response.data.prediction,
+          },
+        }); // Navigate to a success page (optional)
       } else {
         setErrorMessage('There was an issue submitting your data.');
       }
@@ -92,33 +90,11 @@ const Confirmation = () => {
       setLoading(false);
     }
   };
-  
-=======
-  const {
-    name,
-    age,
-    sex,
-    bloodGroup,
-    mobileNumber,
-    email,
-    address,
-    familyHistory,
-    symptoms,
-    skinImages,
-  } = location.state || {};
-
-  const handleConfirm = () => {
-    alert('Thank you! Testing will start.');
-    // Navigate to the image testing page
-    navigate('/test-images', { state: { skinImages } });
-  };
->>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
 
   return (
     <div className="flex justify-center items-start min-h-screen p-4 bg-gray-100">
       <div className="bg-white bg-opacity-100 p-6 rounded shadow-md w-full max-w-md">
         <h2 className="text-center text-2xl mb-4">Submitted Form Data</h2>
-<<<<<<< HEAD
         {formData ? (
           <>
             <p><strong>Name:</strong> {formData.name}</p>
@@ -136,25 +112,6 @@ const Confirmation = () => {
                 <h3 className="text-lg font-bold">Uploaded Images:</h3>
                 <div className="flex flex-wrap">
                   {formData.skinImages.map((image, index) => (
-=======
-        {name ? (
-          <>
-            <p><strong>Name:</strong> {name}</p>
-            <p><strong>Age:</strong> {age}</p>
-            <p><strong>Sex:</strong> {sex}</p>
-            <p><strong>Blood Group:</strong> {bloodGroup}</p>
-            <p><strong>Mobile Number:</strong> {mobileNumber}</p>
-            <p><strong>Email:</strong> {email}</p>
-            <p><strong>Address:</strong> {address || 'N/A'}</p>
-            <p><strong>Family History of Skin Cancer:</strong> {familyHistory ? 'Yes' : 'No'}</p>
-            <p><strong>Symptoms:</strong> {symptoms || 'N/A'}</p>
-
-            {skinImages && skinImages.length > 0 && (
-              <div className="mt-4">
-                <h3 className="text-lg font-bold">Uploaded Images:</h3>
-                <div className="flex flex-wrap">
-                  {skinImages.map((image, index) => (
->>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
                     <img
                       key={index}
                       src={image}
@@ -170,7 +127,6 @@ const Confirmation = () => {
           <p>No data submitted. Please go back to the form.</p>
         )}
 
-<<<<<<< HEAD
         {/* Error message */}
         {errorMessage && (
           <div className="text-red-500 text-center mt-4">
@@ -178,16 +134,17 @@ const Confirmation = () => {
           </div>
         )}
 
-=======
->>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
         <div className="mt-4">
           <button 
             onClick={handleConfirm} 
-            className="bg-green-500 text-white py-2 px-4 rounded mr-2"
-<<<<<<< HEAD
+            className="bg-green-500 text-white py-2 px-4 rounded mr-2 flex items-center justify-center"
             disabled={loading} // Disable button while loading
           >
-            {loading ? 'Submitting...' : 'Confirm'}
+            {loading ? (
+              <div className="animate-spin rounded-full h-6 w-6 border-t-4 border-b-4 border-white"></div> // Spinner
+            ) : (
+              'Confirm' // Button text
+            )}
           </button>
         </div>
 
@@ -200,21 +157,6 @@ const Confirmation = () => {
             Edit
           </button>
         </div>
-=======
-          >
-            Confirm
-          </button>
-        </div>
-
-        {/* <div className="mt-4">
-          <button 
-            onClick={() => navigate('/')} 
-            className="bg-blue-500 text-white py-2 px-4 rounded"
-          >
-            Back to Form
-          </button>
-        </div> */}
->>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
       </div>
     </div>
   );

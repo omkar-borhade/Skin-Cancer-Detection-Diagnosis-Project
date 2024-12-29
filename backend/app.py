@@ -1,45 +1,91 @@
-from flask import Flask, request, jsonify
-import tensorflow as tf
-from tensorflow.keras.models import load_model
-import numpy as np
-from PIL import Image
 import os
+import numpy as np
+import uuid
+from flask import Flask, request, jsonify
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
-# Load your trained model
-model = load_model(r"F:\skin\backend\scripts\skin_cancer_model.h5")
+# Path to your pre-trained model
+MODEL_PATH = r"F:/proj/inreact/backend/scripts/skin_cancer_model.h5"
+
+# Load the pre-trained model
+try:
+    model = load_model(MODEL_PATH)
+    print("Model loaded successfully!")
+except Exception as e:
+    print(f"Error loading model: {e}")
+    model = None
+
+# Directory to save uploaded images
+UPLOAD_FOLDER = 'uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# Allowed image extensions
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
+def allowed_file(filename):
+    """Check if the uploaded file has an allowed extension."""
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def preprocess_image(image_path):
-    """Preprocess the image to the required format for the model."""
-    img = Image.open(image_path).resize((224, 224))  # Adjust size as per your model
-    img_array = np.array(img) / 255.0  # Normalize
-    img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
-    return img_array
+    """Preprocess the image for prediction."""
+    image = load_img(image_path, target_size=(28, 28))  # Resize to the model's input size
+    image = img_to_array(image) / 255.0  # Normalize pixel values
+    image = np.expand_dims(image, axis=0)  # Add batch dimension
+    return image
 
-@app.route('/predict', methods=['POST'])
-def predict():
+def predict(image_path):
+    """Perform prediction on the provided image."""
+    if not os.path.exists(image_path):
+        return {"error": "Image file not found."}
+
     try:
-        # Get the image file from the request
-        if 'image' not in request.files:
-            return jsonify({'error': 'No image provided'}), 400
+        # Preprocess the image
+        image = preprocess_image(image_path)
 
-        image = request.files['image']
-        image_path = os.path.join('uploads', image.filename)
-        image.save(image_path)  # Save the image temporarily
-
-        # Preprocess the image and make a prediction
-        processed_image = preprocess_image(image_path)
-        predictions = model.predict(processed_image)
-
-        # Remove the temporary file
-        os.remove(image_path)
-
-        # Respond with the predictions
-        return jsonify({'predictions': predictions.tolist()})
+        # Perform prediction
+        prediction = model.predict(image)
+        confidence = float(prediction[0][0])  # Convert to Python float
+        label = "Malignant" if confidence > 0.5 else "Benign"
+        return {"label": label, "confidence": round(confidence, 2)}
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return {"error": f"Error during prediction: {e}"}
+
+@app.route('/submit_patient_data', methods=['POST'])
+def submit_patient_data():
+    """Endpoint to handle patient data submission, including skin images."""
+    data = request.get_json()
+
+    # Extract files and patient data
+    skin_images = data.get('skinImages', [])
+
+
+    if not skin_images:
+        return jsonify({'message': 'No files received'}), 400
+
+    # Process received images (e.g., save them or perform further analysis)
+    processed_images = []
+    for file_info in skin_images:
+        file_path = file_info['path']
+        
+        if not os.path.exists(file_path):
+            return jsonify({'message': f'File {file_info["originalname"]} not found'}), 400
+        
+        # Perform prediction on each image
+        result = predict(file_path)
+
+       
+
+    # Save the patient data or perform other operations (e.g., store in MongoDB)
+    # Assuming you save patient_data to a database here
+
+    return jsonify({
+        'message': 'Patient data processed successfully',
+        "prediction": result
+    }), 200
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
-
+    app.run(debug=True, port=5001)

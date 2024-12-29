@@ -3,10 +3,7 @@
 import Carousel from '../components/Carousel';
 import SkinCancerCard from '../components/SkinCancerCard';
 import { cancerDetails } from '../data/cancerDetails'; // Import the cancer details
-<<<<<<< HEAD
 import NearbyDoctors from '../components/NearbyDoctors';
-=======
->>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
 
 function Home() {
   
@@ -24,11 +21,8 @@ function Home() {
           ))}
         </div>
       </div>
-<<<<<<< HEAD
      
       <NearbyDoctors/>
-=======
->>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
     </div>
   );
 }

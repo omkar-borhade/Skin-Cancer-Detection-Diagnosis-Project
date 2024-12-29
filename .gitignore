@@ -31,3 +31,7 @@ env*
 
 uploads*
 scripts*
+scripts
+
+scripts/
+uploads/

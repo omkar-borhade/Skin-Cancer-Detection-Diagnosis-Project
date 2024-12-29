@@ -1,9 +1,5 @@
 const cloudinary = require('../config/cloudinary');
-<<<<<<< HEAD
 const stream = require('stream'); 
-=======
-const stream = require('stream'); // Add this line to import the stream module
->>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
 
 exports.createPatient = async (data, files) => {
   const patientData = {
@@ -23,15 +19,12 @@ exports.createPatient = async (data, files) => {
     // Handle file uploads to Cloudinary
     if (files && files.length > 0) {
       for (const file of files) {
-<<<<<<< HEAD
         // Skip files with empty buffer
         if (!file.buffer || file.buffer.length === 0) {
           console.error('Empty file buffer:', file.originalname);
           continue; // Skip empty files
         }
 
-=======
->>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
         const result = await new Promise((resolve, reject) => {
           const uploadStream = cloudinary.uploader.upload_stream(
             { resource_type: 'auto' },
@@ -66,8 +59,4 @@ exports.createPatient = async (data, files) => {
     console.error('Error preparing patient data:', error);
     throw new Error('Error preparing patient data: ' + error.message);
   }
-<<<<<<< HEAD
 }; 
-=======
-};
->>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6

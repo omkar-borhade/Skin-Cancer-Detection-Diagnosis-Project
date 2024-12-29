@@ -29,11 +29,7 @@ function Login() {
     const loginData = { email, password };
 
     try {
-<<<<<<< HEAD
       const response = await axios.post('http://localhost:5000/api/login', loginData);
-=======
-      const response = await axios.post('http://localhost:3000/api/login', loginData);
->>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
 
       // Dispatch login success with user and token to Redux
       dispatch(loginSuccess({
@@ -75,11 +71,7 @@ function Login() {
     }
 
     try {
-<<<<<<< HEAD
       const response = await axios.post('http://localhost:5000/api/register', registerData);
-=======
-      const response = await axios.post('http://localhost:3000/api/register', registerData);
->>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
 
       // Dispatch login success after registration
       dispatch(loginSuccess({
