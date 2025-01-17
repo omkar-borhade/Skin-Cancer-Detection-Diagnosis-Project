@@ -237,7 +237,10 @@ function TestSkinCancer() {
         };
 
         navigate('/confirmation', { state: formData }); // Send data to the next page
-      })
+      }
+    
+   )
+
       .catch((error) => {
         setErrorMessage('Error converting images. Please try again.');
       });

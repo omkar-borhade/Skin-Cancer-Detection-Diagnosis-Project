@@ -1,101 +1,168 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+// Register the chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const TestResults = () => {
   const location = useLocation();
-  const { prediction, skinImages } = location.state || {};
-  console.log(prediction);
+  const navigate = useNavigate(); // Use navigate to redirect to the report page
+  const { prediction, skinImages ,patient} = location.state || {}; // Destructure the state
+
+  // Check if prediction data exists
+  if (!prediction || prediction.length === 0) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-50 to-blue-100 text-gray-700">
+        <h2 className="text-2xl font-semibold">No predictions available.</h2>
+      </div>
+    );
+  }
+
+  // Extract relevant prediction data (first prediction object)
+  const { predicted_class, probabilities } = prediction[0].result || {};
+
+  // Sort the probabilities and get the Top 3 predictions
+  const sortedProbabilities = Object.entries(probabilities)
+    .sort(([, probA], [, probB]) => probB - probA)
+    .slice(0, 3);
+
+  // Prepare chart data for probabilities
+  const chartData = {
+    labels: Object.keys(probabilities),
+    datasets: [
+      {
+        label: 'Class Probabilities',
+        data: Object.values(probabilities),
+        backgroundColor: [
+          '#6EE7B7',
+          '#60A5FA',
+          '#FCA5A5',
+          '#FCD34D',
+          '#A78BFA',
+          '#F472B6',
+        ],
+        borderWidth: 2,
+        hoverBorderColor: '#111827',
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Prediction Probabilities',
+        font: { size: 16 },
+        color: '#374151',
+      },
+      tooltip: {
+        callbacks: {
+          label: function (tooltipItem) {
+            const percentage = (tooltipItem.raw * 100).toFixed(2);
+            return `${tooltipItem.label}: ${percentage}%`;
+          },
+        },
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 1,
+        ticks: {
+          callback: function (value) {
+            return `${(value * 100).toFixed(0)}%`;
+          },
+        },
+      },
+    },
+  };
+
+  const handleGenerateReport = () => {
+    const reportData = {
+      predicted_class: predicted_class || 'No prediction available',
+      topPredictions: sortedProbabilities,
+      additionalInfo: 'More details can be added here', // Add more details if required
+    };
+
+    // Navigate to the report page and pass the data
+    navigate('/generated-report', { state: { reportData, skinImages, prediction, patient  } });
+  };
 
   return (
-    <div className="flex justify-center items-start min-h-screen p-4 bg-gray-100">
-      <div className="bg-white bg-opacity-100 p-6 rounded shadow-md w-full max-w-md">
-        <h2 className="text-center text-2xl mb-4">Test Results</h2>
+    <div className="flex justify-center items-center min-h-screen p-6 bg-gradient-to-r from-blue-50 to-blue-100">
+      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-5xl space-y-6">
+        {/* Header */}
+        <h2 className="text-3xl font-bold text-center text-gray-700 mb-4">
+          Test Results
+        </h2>
 
-        {/* Display Uploaded Image */}
-        <h3 className="text-lg mb-2">Uploaded Image:</h3>
-        {skinImages && skinImages.length > 0 && (
-          <img
-            src={skinImages[0]} // Display the first image (assuming only one image)
-            alt="Uploaded Skin Image"
-            className="w-32 h-32 object-cover m-2 border border-gray-300 rounded"
-          />
-        )}
-
-        {/* Display Prediction Result */}
-        <h3 className="text-lg mt-4 mb-2">Prediction Result:</h3>
-        {prediction ? (
-          <div>
-            <p><strong>Prediction:</strong> {prediction.label}</p>
-            <p>Confidence: {(prediction.confidence * 100).toFixed(2)}%</p>
+        <div className="flex flex-col md:flex-row space-x-0 md:space-x-8 space-y-6 md:space-y-0">
+          {/* Left Side: Uploaded Image and Top-3 Predictions */}
+          <div className="w-full md:w-1/3 bg-gradient-to-r from-blue-100 to-blue-50 p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200">
+            <h3 className="text-lg font-medium text-center text-gray-700 mb-4">
+              Uploaded Image
+            </h3>
+            {skinImages && skinImages.length > 0 && (
+              <img
+                src={skinImages[0]}
+                alt="Uploaded Skin Image"
+                className="w-full h-auto object-cover rounded-lg border border-gray-200 shadow-md"
+              />
+            )}
+            <h3 className="text-lg font-medium mt-4 text-gray-700">
+              Top-3 Predictions:
+            </h3>
+            <ul className="list-disc pl-5 space-y-1 text-gray-600">
+              {sortedProbabilities.map(([className, prob], index) => (
+                <li key={index}>
+                  <strong>{className}</strong>: {`${(prob * 100).toFixed(2)}%`}
+                </li>
+              ))}
+            </ul>
           </div>
-        ) : (
-          <p>No prediction available.</p>
-        )}
+
+          {/* Right Side: Prediction Details and Chart */}
+          <div className="w-full md:w-2/3 bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200">
+            <h3 className="text-xl font-semibold text-gray-700 mb-4">
+              Prediction Details
+            </h3>
+            <p className="text-gray-600 mb-4">
+              <strong>Prediction:</strong> {predicted_class || 'No prediction available.'}
+            </p>
+            <div className="mb-6">
+              <Bar data={chartData} options={chartOptions} />
+            </div>
+            <div className="text-center">
+              <button
+                onClick={handleGenerateReport}
+                className="px-6 py-3 bg-gradient-to-r from-green-400 to-blue-500 text-white font-medium rounded-lg shadow hover:shadow-xl transition-shadow duration-200 hover:opacity-90"
+              >
+                Generate Report
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
 export default TestResults;
-
-
-
-// ===============================================================
-
-// import React, { useState, useEffect } from 'react';
-// import { useLocation } from 'react-router-dom';
-
-// const TestImages = () => {
-//   const location = useLocation();
-//   const { skinImages } = location.state || {};
-//   const [isLoading, setIsLoading] = useState(true);
-//   const [noResults, setNoResults] = useState(false);
-
-//   useEffect(() => {
-//     // Simulate an image testing/loading process
-//     const timer = setTimeout(() => {
-//       setIsLoading(false); // Stop loading after 2 seconds
-
-//       // If there are no skin images, simulate "no results" case
-//       if (!skinImages || skinImages.length === 0) {
-//         setNoResults(true);
-//       }
-//     }, 2000);
-
-//     // Cleanup the timer when component unmounts
-//     return () => clearTimeout(timer);
-//   }, [skinImages]);
-
-//   return (
-//     <div className="flex justify-center items-start min-h-screen p-4 bg-gray-100">
-//       <div className="bg-white bg-opacity-100 p-6 rounded shadow-md w-full max-w-lg">
-//         <h2 className="text-center text-2xl mb-4">Image Testing</h2>
-
-//         {isLoading ? (
-//           // Show circular loading spinner
-//           <div className="flex justify-center items-center">
-//             <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
-//           </div>
-//         ) : noResults ? (
-//           // No images or no results available after testing
-//           <p className="text-center text-red-500 font-semibold">
-//             No images available for testing or no results found.
-//           </p>
-//         ) : (
-//           <div className="flex flex-wrap">
-//             {skinImages.map((image, index) => (
-//               <img
-//                 key={index}
-//                 src={image}
-//                 alt={`Skin image ${index + 1}`}
-//                 className="w-32 h-32 object-cover m-2 border border-gray-300 rounded"
-//               />
-//             ))}
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default TestImages;

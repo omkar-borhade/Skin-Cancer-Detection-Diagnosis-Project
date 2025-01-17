@@ -1,18 +1,152 @@
+// const multer = require('multer');
+// const sharp = require('sharp');
+// const fs = require('fs');
+// const path = require('path');
+// const axios = require('axios');
+// const stream = require('stream');
+// const cloudinary = require('../config/cloudinary');
+// const patientService = require('../services/patientService');
+// const Patient = require('../models/Patient.Modal.js');
+
+// // Configure multer for file uploads (in-memory storage)
+// const storage = multer.memoryStorage();
+// const upload = multer({
+//   storage,
+//   limits: {
+//     fileSize: 5 * 1024 * 1024, // 5MB max file size
+//   },
+// });
+
+// // Define the upload directory
+// const uploadDir = path.join(__dirname, '../uploads');
+
+// // Ensure the upload directory exists
+// if (!fs.existsSync(uploadDir)) {
+//   fs.mkdirSync(uploadDir, { recursive: true });
+// }
+
+// // Function to handle patient data submission
+// exports.submitPatientData = async (req, res) => {
+//   upload.array('skinImages', 5)(req, res, async (err) => {
+//     if (err) {
+//       return res.status(400).json({ message: 'Error uploading files', error: err.message });
+//     }
+
+//     if (!req.files || req.files.length === 0) {
+//       return res.status(400).json({ message: 'No files uploaded' });
+//     }
+
+//     try {
+//       const processedFiles = [];
+//       for (const file of req.files) {
+//         const fileName = `${Date.now()}_${file.originalname.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+
+//         // Process image using Sharp
+//         const compressedBuffer = await sharp(file.buffer)
+//           .resize(1024)
+//           .jpeg({ quality: 80 })
+//           .toBuffer();
+
+//         const filePath = path.join(uploadDir, fileName);
+//         await fs.promises.writeFile(filePath, compressedBuffer);
+
+//         processedFiles.push({
+//           originalname: fileName,
+//           path: filePath,
+//         });
+//       }
+
+//       // Send processed images to Flask API for prediction
+//       const flaskResponse = await axios.post('http://localhost:5001/submit_patient_data', {
+//         skinImages: processedFiles.map((file) => ({
+//           path: file.path,
+//           originalname: file.originalname,
+//         })),
+//       });
+
+//       const updatedFiles = [];
+
+//       // Upload images to Cloudinary and collect the URLs
+//       for (const file of processedFiles) {
+//         const fileBuffer = await fs.promises.readFile(file.path);
+
+//         // Upload to Cloudinary using a stream
+//         const result = await new Promise((resolve, reject) => {
+//           const uploadStream = cloudinary.uploader.upload_stream(
+//             { resource_type: 'auto' },
+//             (error, result) => {
+//               if (error) {
+//                 console.error('Cloudinary upload error:', error);
+//                 reject(new Error('Error uploading image'));
+//               } else {
+//                 resolve(result);
+//               }
+//             }
+//           );
+
+//           const bufferStream = new stream.PassThrough();
+//           bufferStream.end(fileBuffer);
+//           bufferStream.pipe(uploadStream);
+//         });
+
+//         updatedFiles.push({
+//           imageUrl: result.secure_url,
+//           prediction: flaskResponse.data.predictions[updatedFiles.length]?.result?.predicted_class || 'Pending',
+//           predictionDate: new Date(),
+//         });
+//       }
+
+//       // Check if the patient already exists
+//       let patient = await Patient.findOne({ email: req.body.email });
+
+//       if (patient) {
+//         // Append new images and predictions to the existing patient record
+//         patient.skinImages = [...patient.skinImages, ...updatedFiles];
+//       } else {
+//         // Create new patient data
+//         const patientData = await patientService.createPatient(req.body, updatedFiles);
+//         patient = new Patient(patientData);
+//       }
+
+//       // Save the updated or new patient data
+//       await patient.save();
+
+//       // Respond with the prediction result from Flask
+//       res.status(201).json({
+//         prediction: flaskResponse.data,
+//         patient,
+//       });
+//     } catch (error) {
+//       if (error.name === 'ValidationError') {
+//         const errors = Object.values(error.errors).map((err) => err.message);
+//         return res.status(400).json({ message: 'Validation error', errors });
+//       }
+
+//       console.error('Error submitting patient data:', error);
+//       res.status(500).json({ message: 'Error submitting patient data', error: error.message });
+//     }
+//   });
+// };
+
+
 const multer = require('multer');
 const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
+const stream = require('stream');
+const cloudinary = require('../config/cloudinary');
 const patientService = require('../services/patientService');
 const Patient = require('../models/Patient.Modal.js');
-const axios = require('axios');
+
 // Configure multer for file uploads (in-memory storage)
-const storage = multer.memoryStorage(); // Use memory storage to hold files in memory
+const storage = multer.memoryStorage();
 const upload = multer({
   storage,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB max file size (adjust as needed)
+    fileSize: 5 * 1024 * 1024, // 5MB max file size
   },
-}); // Configure multer to use in-memory storage
+});
 
 // Define the upload directory
 const uploadDir = path.join(__dirname, '../uploads');
@@ -24,93 +158,114 @@ if (!fs.existsSync(uploadDir)) {
 
 // Function to handle patient data submission
 exports.submitPatientData = async (req, res) => {
-  // Use multer middleware to handle file uploads
-  upload.array('skinImages', 5)(req, res, async (err) => {
+  upload.array('skinImages', 1)(req, res, async (err) => {  // Limit to 1 file upload
     if (err) {
       return res.status(400).json({ message: 'Error uploading files', error: err.message });
     }
 
-    // Debugging: Log the uploaded files
-    console.log('Uploaded files:', req.files);
-
-    // Check if files are uploaded correctly
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ message: 'No files uploaded' });
     }
 
     try {
       const processedFiles = [];
-
-      // Process each uploaded image
       for (const file of req.files) {
-        // Log the file buffer to ensure it's not empty
-        console.log('File buffer for', file.originalname, file.buffer.length);
+        const fileName = file.originalname; // Keep the original file name
 
-        // Ensure that the file buffer is not empty
-        if (!file.buffer || file.buffer.length === 0) {
-          console.error('Empty file buffer for file:', file.originalname);
-          continue; // Skip this file
-        }
-
-        // Append the timestamp to the original file name
-        const fileName = `${Date.now()}_${file.originalname.replace(/[^a-zA-Z0-9.]/g, '_')}`;
-
-        // Process image using Sharp (if you want to compress and resize)
+        // Process image using Sharp
         const compressedBuffer = await sharp(file.buffer)
-          .resize(1024) // Resize to a max width of 1024px
-          .jpeg({ quality: 80 }) // Convert to JPEG format with 80% quality
-          .toBuffer(); // Output the processed image as a buffer
+          .resize(1024)
+          .jpeg({ quality: 80 })
+          .toBuffer();
 
-        // Define the file path where the image will be saved
         const filePath = path.join(uploadDir, fileName);
 
-        // Save the processed image to the file system
+        // Delete the old image if it exists
+        if (fs.existsSync(filePath)) {
+          await fs.promises.unlink(filePath); // Remove old image
+        }
+
         await fs.promises.writeFile(filePath, compressedBuffer);
 
-        // Push the image data into the processedFiles array
         processedFiles.push({
           originalname: fileName,
-          path: filePath, // Store the path of the saved image
+          path: filePath,
         });
       }
 
-      // Prepare data for patient creation, passing the image files (with file paths)
-      const patientData = await patientService.createPatient(req.body, processedFiles);
+      // Send processed image to Flask API for prediction
+      const flaskResponse = await axios.post('http://localhost:5001/submit_patient_data', {
+        skinImages: processedFiles.map((file) => ({
+          path: file.path,
+          originalname: file.originalname,
+        })),
+      });
 
-      // Save the patient data to MongoDB
-      const patient = new Patient(patientData);
-      await patient.save();
+      const updatedFiles = [];
 
-       // Send processed files to Flask for further processing (e.g., storing or analyzing)
-       try {
-        const flaskResponse = await axios.post('http://localhost:5001/submit_patient_data', {
-          skinImages: processedFiles,
-          
+      // Upload image to Cloudinary and collect the URL
+      for (const file of processedFiles) {
+        const fileBuffer = await fs.promises.readFile(file.path);
+
+        // Upload to Cloudinary using a stream
+        const result = await new Promise((resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            { resource_type: 'auto' },
+            (error, result) => {
+              if (error) {
+                console.error('Cloudinary upload error:', error);
+                reject(new Error('Error uploading image'));
+              } else {
+                resolve(result);
+              }
+            }
+          );
+
+          const bufferStream = new stream.PassThrough();
+          bufferStream.end(fileBuffer);
+          bufferStream.pipe(uploadStream);
         });
 
-        console.log('Flask response:', flaskResponse.data);
+        updatedFiles.push({
+          imageUrl: result.secure_url,
+          prediction: flaskResponse.data.predictions[updatedFiles.length]?.result?.predicted_class || 'Pending',
+          predictionDate: new Date(),
+        });
+      }
 
-      // Respond with success
+      // Check if the patient already exists
+      let patient = await Patient.findOne({ email: req.body.email });
+
+      if (patient) {
+        // Replace the skin image with the new one
+        patient.skinImages = updatedFiles;
+      } else {
+        // Create new patient data
+        const patientData = await patientService.createPatient(req.body, updatedFiles);
+        patient = new Patient(patientData);
+      }
+
+      // Save the updated or new patient data
+      await patient.save();
+
+      // Respond with the prediction result from Flask
       res.status(201).json({
-        message: 'Patient data submitted successfully',
-        prediction: flaskResponse.data.prediction,
-        //     patient: patientData,
+        prediction: flaskResponse.data,
+        patient,
       });
-    } catch (flaskError) {
-      console.error('Error sending data to Flask:', flaskError);
-      res.status(500).json({
-        message: 'Error sending data to Flask',
-        error: flaskError.message,
-      });
-    }
+
+      // Cleanup: Delete all processed files
+      for (const file of processedFiles) {
+        if (fs.existsSync(file.path)) {
+          await fs.promises.unlink(file.path); // Remove file
+        }
+      }
     } catch (error) {
-      // Handle validation errors
       if (error.name === 'ValidationError') {
-        const errors = Object.values(error.errors).map(err => err.message);
+        const errors = Object.values(error.errors).map((err) => err.message);
         return res.status(400).json({ message: 'Validation error', errors });
       }
 
-      // Handle and log other errors
       console.error('Error submitting patient data:', error);
       res.status(500).json({ message: 'Error submitting patient data', error: error.message });
     }

@@ -1,8 +1,4 @@
-// models/Patient.js
 const mongoose = require('mongoose');
-function arrayLimit(val) {
-  return val.length <= 5;
-}
 
 const patientSchema = new mongoose.Schema({
   name: {
@@ -24,23 +20,30 @@ const patientSchema = new mongoose.Schema({
   mobileNumber: {
     type: String,
     required: true,
-    
   },
   email: {
     type: String,
     required: true,
-    unique: true, 
-    
   },
   address: {
     type: String,
     required: false,
   },
-  skinImages: {
-    type: [String], // Array of strings to store image URLs
-    required: true,
-   
-  },
+  // Store each image with its corresponding prediction
+  skinImages: [{
+    imageUrl: {
+      type: String, // URL or file path for the image
+      required: true,
+    },
+    prediction: {
+      type: String, // Prediction result for the image (e.g., "Cancer", "Non-cancer")
+      required: true,
+    },
+    predictionDate: {
+      type: Date, // Date of the prediction for the image
+      default: Date.now,
+    },
+  }],
   familyHistory: {
     type: Boolean,
     required: true, // Indicate family history of skin cancer

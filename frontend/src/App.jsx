@@ -21,7 +21,7 @@ import NewPatients from './pages/NewPatients';
 import ContactUS from './pages/ContactUs';
 import TestImage from './pages/test-images';
 import NearbyDoctors from './components/NearbyDoctors';
-
+import GeneratedReport from './components/GeneratedReport';
 
 
 
@@ -42,6 +42,7 @@ function App() {
               <Route path="/cancer/:id" element={<CancerDetail />} />
               <Route path="/confirmation" element={<Confirmation />} />
               <Route path="/test-images" element={<TestImage />} />
+              <Route path="/generated-report" element={<GeneratedReport />} />
               <Route path="/login" element={<Login />} />
               <Route path="/profile" element={<Profile />} /> 
 
