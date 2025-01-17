@@ -36,3 +36,5 @@ scripts/*
 
 scripts/
 uploads/
+
+node_modules/
