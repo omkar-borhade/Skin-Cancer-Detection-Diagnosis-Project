@@ -40,3 +40,5 @@ scripts*
 =======
 env*
 >>>>>>> 14151cd0019b48fb9a9b7558209e3fb3a1483fa6
+
+node_modules/
