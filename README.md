@@ -2,7 +2,7 @@
 
 
 ## Progress
-![90% Progress](https://www.progressbar.dev/90)
+![Progress](https://www.progressbar.dev/90)
 
 - 90% work done.
 - Remaining tasks: modal Final testing and deployment.
