@@ -2,10 +2,10 @@
 
 
 ## Progress
-![Progress](https://www.progressbar.dev/90)
+![90% Progress](https://www.progressbar.dev/90)
 
 - 90% work done.
-- Remaining tasks: Final modal  testing and deployment.
+- Remaining tasks: modal Final testing and deployment.
 
 # Skin Cancer Detection and Diagnosis
  
