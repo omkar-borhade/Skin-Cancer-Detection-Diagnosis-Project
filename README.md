@@ -1,14 +1,13 @@
-#   !!..IN WORKING..!!
+# Skin Cancer Detection and Diagnosis
 
+## !!..IN WORKING..!!
 
 ## Progress
 ![Work Progress](https://img.shields.io/badge/Work%20Progress-90%25-brightgreen)
 
 - 90% work done.
-- Remaining tasks: modal Final testing and deployment.
-- 
-# Skin Cancer Detection and Diagnosis
- 
+- Remaining tasks: Modal, final testing, and deployment.
+
 ## Overview
 
 This project aims to develop a **Skin Cancer Detection and Diagnosis** application that utilizes deep learning techniques to analyze images of skin lesions. The application provides users with the ability to upload images, receive diagnostic predictions, and access information about nearby dermatologists and oncologists.
@@ -20,8 +19,6 @@ This project aims to develop a **Skin Cancer Detection and Diagnosis** applicati
 - [Installation](#installation)
 - [Usage](#usage)
 
-
-
 ## Technologies Used
 
 - **Frontend:** 
@@ -32,11 +29,14 @@ This project aims to develop a **Skin Cancer Detection and Diagnosis** applicati
   - Express.js
   - MongoDB
 - **Deep Learning Framework:** 
-  - TensorFlow / Keras (specify which one you are using)
+  - TensorFlow / Keras
 - **Image Storage:** 
   - Cloudinary
 - **API Integration:** 
   - Lybrate (for finding dermatologists and oncologists)
+- **Health-related Libraries and Tools:**
+  - **Deep Learning:** TensorFlow for skin cancer detection.
+  - **Image Processing:** OpenCV or other image pre-processing libraries.
 
 ## Features
 
@@ -45,6 +45,7 @@ This project aims to develop a **Skin Cancer Detection and Diagnosis** applicati
 - Access a list of nearby dermatologists and oncologists.
 - User authentication and management.
 - Responsive design for mobile and desktop.
+- Visual analysis of skin lesions through image processing.
 
 ## Installation
 
@@ -52,3 +53,5 @@ This project aims to develop a **Skin Cancer Detection and Diagnosis** applicati
 
    ```bash
    git clone https://github.com/omkar-borhade/Skin-Cancer-Detection-Diagnosis-Project.git
+
+
