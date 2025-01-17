@@ -1,11 +1,11 @@
 #   !!..IN WORKING..!!
 
+
 ## Progress
-![Work Progress](https://img.shields.io/badge/Work%20Progress-90%25-brightgreen)
+![Progress](https://www.progressbar.dev/90)
 
 - 90% work done.
-- Remaining tasks: Final testing and deployment.
-
+- Remaining tasks: Final modal  testing and deployment.
 
 # Skin Cancer Detection and Diagnosis
  
