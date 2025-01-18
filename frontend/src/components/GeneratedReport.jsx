@@ -212,10 +212,10 @@ const handleEmail = () => {
           <div className="w-full sm:w-1/2">
             <h3 className="text-2xl font-semibold text-gray-700">Prediction Results</h3>
             <p className="mt-4 text-sm">
-              <strong>Predicted Class: </strong>
+              <strong> Diagnosis: </strong>
               <span className="bg-lime-100 p-1 ">{predicted_class}</span>
             </p>
-            <p className="mt-2 text-sm"><strong>Prediction Probabilities:</strong></p>
+            <p className="mt-2 text-sm"><strong>Diagnosis Probabilities:</strong></p>
             <table className="w-full mt-2 text-sm text-gray-600">
               <tbody>
                 {topPredictions.map(([className, prob], index) => (
