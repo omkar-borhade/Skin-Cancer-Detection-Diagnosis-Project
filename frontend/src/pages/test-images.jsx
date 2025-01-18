@@ -24,7 +24,9 @@ ChartJS.register(
 const TestResults = () => {
   const location = useLocation();
   const navigate = useNavigate(); // Use navigate to redirect to the report page
-  const { prediction, skinImages ,patient} = location.state || {}; // Destructure the state
+  const { prediction, skinImages, patient } = location.state || {}; // Destructure the state
+  
+  console.log("prediction", prediction);
 
   // Check if prediction data exists
   if (!prediction || prediction.length === 0) {
@@ -36,7 +38,7 @@ const TestResults = () => {
   }
 
   // Extract relevant prediction data (first prediction object)
-  const { predicted_class, probabilities } = prediction[0].result || {};
+  const { predicted_class, probabilities, category } = prediction[0].result || {};
 
   // Sort the probabilities and get the Top 3 predictions
   const sortedProbabilities = Object.entries(probabilities)
@@ -98,12 +100,13 @@ const TestResults = () => {
   const handleGenerateReport = () => {
     const reportData = {
       predicted_class: predicted_class || 'No prediction available',
+      category: category || 'No category available',  // Added category
       topPredictions: sortedProbabilities,
       additionalInfo: 'More details can be added here', // Add more details if required
     };
 
     // Navigate to the report page and pass the data
-    navigate('/generated-report', { state: { reportData, skinImages, prediction, patient  } });
+    navigate('/generated-report', { state: { reportData, skinImages, prediction, patient } });
   };
 
   return (
@@ -146,6 +149,9 @@ const TestResults = () => {
             </h3>
             <p className="text-gray-600 mb-4">
               <strong>Prediction:</strong> {predicted_class || 'No prediction available.'}
+            </p>
+            <p className="text-gray-600 mb-4">
+              <strong>Category:</strong> {category || 'No category available.'}  {/* Display the category */}
             </p>
             <div className="mb-6">
               <Bar data={chartData} options={chartOptions} />

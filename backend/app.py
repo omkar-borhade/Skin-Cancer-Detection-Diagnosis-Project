@@ -13,14 +13,25 @@ MODEL_PATH = r"F:\\skin\\backend\\scripts\\my_skin_disease_pred_model (2).h5"
 
 # Define class names (Update this according to your model's output classes)
 class_names = [
-    'Melanocytic nevi',
-    'Melanoma',
-    'Benign keratosis-like lesions',
-    'Basal cell carcinoma',
-    'Actinic keratoses',
-    'Vascular lesions',
-    'Dermatofibroma'
+    'Actinic Keratoses',  # akic
+    'Basal Cell Carcinoma',  # bcc
+    'Benign Keratosis-like Lesions',  # bkl
+    'Dermatofibroma',  # df
+    'Melanoma',  # mel
+    'Melanocytic Nevi',  # nv
+    'Vascular Lesions'  # vsc
 ]
+
+# Define the categories for each class
+categories = {
+    'Actinic Keratoses': 'Pre-cancerous',  # akic
+    'Basal Cell Carcinoma': 'Cancerous',  # bcc
+    'Benign Keratosis-like Lesions': 'Non-cancerous',  # bkl
+    'Dermatofibroma': 'Non-cancerous',  # df
+    'Melanoma': 'Cancerous',  # mel
+    'Melanocytic Nevi': 'Non-cancerous',  # nv
+    'Vascular Lesions': 'Non-cancerous'  # vsc
+}
 
 # Load the pre-trained model
 try:
@@ -93,8 +104,12 @@ def predict(image_path):
         predicted_class = np.argmax(prediction, axis=0)  # Index of the highest probability
 
         probabilities = prediction  # All class probabilities
+        predicted_class_name = class_names[predicted_class]
+        predicted_category = categories.get(predicted_class_name, "Unknown")
+
         result = {
-            "predicted_class": class_names[predicted_class],
+            "predicted_class": predicted_class_name,
+            "category": predicted_category,  # Add the cancer classification category
             "probabilities": {class_names[i]: float(prob) for i, prob in enumerate(probabilities)},
         }
         return result
@@ -150,6 +165,164 @@ def submit_patient_data():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
+
+
+
+
+
+
+# import os
+# import cv2
+# import numpy as np
+# from flask import Flask, request, jsonify
+# from tensorflow.keras.models import load_model
+# from tensorflow.keras.preprocessing.image import load_img, img_to_array
+# from werkzeug.utils import secure_filename
+
+# app = Flask(__name__)
+
+# # Path to your pre-trained model
+# MODEL_PATH = r"F:\\skin\\backend\\scripts\\my_skin_disease_pred_model (2).h5"
+
+# # Define class names (Update this according to your model's output classes)
+# class_names = [
+#      'Actinic Keratoses',  # akic
+#     'Basal Cell Carcinoma',  # bcc
+#     'Benign Keratosis-like Lesions',  # bkl
+#     'Dermatofibroma',  # df
+#     'Melanoma',  # mel
+#     'Melanocytic Nevi',  # nv
+#     'Vascular Lesions'  # vsc
+# ]
+
+# # Load the pre-trained model
+# try:
+#     model = load_model(MODEL_PATH)
+#     print("Model loaded successfully!")
+# except Exception as e:
+#     print(f"Error loading model: {e}")
+#     model = None
+
+# # Directory to save uploaded images (we'll overwrite this image with every new upload)
+# UPLOAD_FOLDER = 'uploads'
+# os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# # Allowed image extensions
+# ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
+# def allowed_file(filename):
+#     """Check if the uploaded file has an allowed extension."""
+#     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# def preprocess_image(image_path):
+#     """Preprocess the image for prediction."""
+#     image = load_img(image_path, target_size=(64, 64))  # Resize to model's input size
+#     image = img_to_array(image) / 255.0  # Normalize pixel values
+#     image = np.expand_dims(image, axis=0)  # Add batch dimension
+#     return image
+
+# def remove_hair(image_path):
+#     """Remove hair from the image without blurring."""
+#     image = cv2.imread(image_path)
+#     if image is None:
+#         raise ValueError("Invalid image path or format.")
+
+#     original_image = image.copy()  # Keep the original image for comparison
+
+#     # Convert the image to grayscale
+#     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+#     # Detect hair using morphological operations
+#     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (17, 17))
+#     blackhat = cv2.morphologyEx(gray, cv2.MORPH_BLACKHAT, kernel)
+
+#     # Threshold the blackhat image to create a mask for hair regions
+#     _, hair_mask = cv2.threshold(blackhat, 10, 255, cv2.THRESH_BINARY)
+
+#     # Inpaint the detected hair regions with minimal blur
+#     inpainted_image = cv2.inpaint(image, hair_mask, inpaintRadius=3, flags=cv2.INPAINT_NS)  # Use Navier-Stokes inpainting
+
+#     # Compare if the processed image is different from the original image
+#     if np.array_equal(original_image, inpainted_image):
+#         return None  # No change, return None to indicate no modification
+
+#     # Return the modified image directly without saving
+#     return inpainted_image  # Return the inpainted image directly
+
+# def predict(image_path):
+#     """Perform prediction on the provided image."""
+#     if not os.path.exists(image_path):
+#         return {"error": "Image file not found."}
+
+#     if model is None:
+#         return {"error": "Model not loaded properly."}
+
+#     try:
+#         # Preprocess the image
+#         image = preprocess_image(image_path)
+
+#         # Perform prediction
+#         prediction = model.predict(image)[0]  # Prediction is a list of probabilities
+#         predicted_class = np.argmax(prediction, axis=0)  # Index of the highest probability
+
+#         probabilities = prediction  # All class probabilities
+#         result = {
+#             "predicted_class": class_names[predicted_class],
+#             "probabilities": {class_names[i]: float(prob) for i, prob in enumerate(probabilities)},
+#         }
+#         return result
+
+#     except Exception as e:
+#         return {"error": f"Error during prediction: {e}"}
+
+# @app.route('/submit_patient_data', methods=['POST'])
+# def submit_patient_data():
+#     """Endpoint to handle patient data submission, including skin images."""
+#     data = request.get_json()
+
+#     # Extract files and patient data
+#     skin_images = data.get('skinImages', [])
+
+#     if not skin_images:
+#         return jsonify({'message': 'No files received'}), 400
+
+#     predictions = []
+#     for file_info in skin_images:
+#         file_path = file_info['path']
+#         filename = file_info['originalname']
+
+#         if not os.path.exists(file_path):
+#             return jsonify({'message': f'File {filename} not found'}), 400
+
+#         # Remove hair from the image and process it, if applicable
+#         try:
+#             processed_image = remove_hair(file_path)  # If no hair is removed, return None
+#             if processed_image is None:
+#                 processed_image = cv2.imread(file_path)  # Use the original image if no modification occurs
+#         except Exception as e:
+#             return jsonify({'message': f'Error processing file {filename}: {e}'}), 500
+
+#         # Save processed image temporarily to perform prediction
+#         temp_processed_path = "temp_processed_image.jpg"
+#         cv2.imwrite(temp_processed_path, processed_image)
+
+#         # Perform prediction on the processed (or original) image
+#         result = predict(temp_processed_path)  # We use the processed or original file
+#         predictions.append({
+#             "file": filename,
+#             "processed_image": temp_processed_path,
+#             "result": result
+#         })
+
+#     # Save the patient data or perform other operations (e.g., store in MongoDB)
+
+#     return jsonify({
+#         'message': 'Patient data processed successfully',
+#         'predictions': predictions
+#     }), 200
+
+# if __name__ == '__main__':
+#     app.run(debug=True, port=5001)
 
 
 

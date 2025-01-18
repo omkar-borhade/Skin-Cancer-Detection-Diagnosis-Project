@@ -30,6 +30,7 @@ const GeneratedReport = () => {
     patientSex,
     skinImage,
     predicted_class,
+    category,
     topPredictions,
   } = reportData;
 
@@ -212,7 +213,7 @@ const handleEmail = () => {
             <h3 className="text-2xl font-semibold text-gray-700">Prediction Results</h3>
             <p className="mt-4 text-sm">
               <strong>Predicted Class: </strong>
-              <span className="bg-lime-100 p-1 underline">{predicted_class}</span>
+              <span className="bg-lime-100 p-1 ">{predicted_class}</span>
             </p>
             <p className="mt-2 text-sm"><strong>Prediction Probabilities:</strong></p>
             <table className="w-full mt-2 text-sm text-gray-600">
@@ -227,6 +228,24 @@ const handleEmail = () => {
             </table>
           </div>
         </div>
+        
+        <div className="mt-2 text-sm">
+  <strong>Category: </strong>
+  <span
+    className={`p-1  ${
+      category === 'Cancerous'
+        ? 'bg-red-100 text-red-700'
+        : category === 'Non-cancerous'
+        ? 'bg-green-100 text-green-700'
+        : category === 'Pre-cancerous'
+        ? 'bg-yellow-100 text-yellow-700'
+        : 'bg-gray-100 text-gray-700' // Default background for other cases
+    }`}
+  >
+    {category}
+  </span>
+</div>
+
 
         {/* Bar Chart */}
         <div className="w-full pb-4">
