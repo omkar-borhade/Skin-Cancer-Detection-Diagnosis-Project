@@ -5,11 +5,12 @@ const Footer = () => {
   return (
     <footer className="bg-gray-800 text-white py-6">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4"> {/* Changed to a grid layout with 4 columns */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"> {/* Added responsive grid with different column numbers based on screen size */}
+          
           {/* Skin Cancer Services Group */}
           <div className="mb-4">
-            <h2 className="text-lg font-semibold mb-2 text-center">Skin Cancer Services</h2>
-            <ul className="text-center space-y-2">
+            <h2 className="text-lg font-semibold mb-2 text-center sm:text-left">Skin Cancer Services</h2>
+            <ul className="text-center sm:text-left space-y-2">
               <li><a href="/#" className="hover:underline">Skin Cancer Screening</a></li>
               <li><a href="/#" className="hover:underline">Diagnosis and Treatment</a></li>
               <li><a href="/#" className="hover:underline">Early Detection Programs</a></li>
@@ -21,8 +22,8 @@ const Footer = () => {
 
           {/* Patient Information Group */}
           <div className="mb-4">
-            <h2 className="text-lg font-semibold mb-2 text-center">Patient Information</h2>
-            <ul className="text-center space-y-2">
+            <h2 className="text-lg font-semibold mb-2 text-center sm:text-left">Patient Information</h2>
+            <ul className="text-center sm:text-left space-y-2">
               <li><a href="/new-patients" className="hover:underline">New Patients</a></li>
               <li><a href="/feedback" className="hover:underline">Feedback</a></li>
               <li><a href="/#" className="hover:underline">Appointments & Fees</a></li>
@@ -33,8 +34,8 @@ const Footer = () => {
 
           {/* Additional Links Group */}
           <div className="mb-4">
-            <h2 className="text-lg font-semibold mb-2 text-center">Additional Links</h2>
-            <ul className="text-center space-y-2">
+            <h2 className="text-lg font-semibold mb-2 text-center sm:text-left">Additional Links</h2>
+            <ul className="text-center sm:text-left space-y-2">
               <li><a href="/contact-us" className="hover:underline">Contact Us</a></li>
               <li><a href="/about" className="hover:underline">About Us</a></li>
               <li><a href="/privacy-policy" className="hover:underline">Privacy Policy</a></li>
@@ -43,15 +44,14 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* New Section Group */}
+          {/* Resources Group */}
           <div className="mb-4">
-            <h2 className="text-lg font-semibold mb-2 text-center">Resources</h2>
-            <ul className="text-center space-y-2">
+            <h2 className="text-lg font-semibold mb-2 text-center sm:text-left">Resources</h2>
+            <ul className="text-center sm:text-left space-y-2">
               <li><a href="/blog" className="hover:underline">Blog</a></li>
               <li><a href="community-support" className="hover:underline">Community Support</a></li>
               <li><a href="/#" className="hover:underline">Research Articles</a></li>
               <li><a href="/#" className="hover:underline">Patient Testimonials</a></li>
-             
             </ul>
           </div>
         </div>

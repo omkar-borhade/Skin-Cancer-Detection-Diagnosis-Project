@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'; // Import useEffect here
 import { FaUser, FaPhone, FaEnvelope, FaMapMarkerAlt, FaFileUpload, FaCheckCircle } from 'react-icons/fa';
 import FormBG from '/image/FormBG.jpg'; // Adjust the path as necessary
 import axios from 'axios'; // Import Axios
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import { useNavigate,useLocation } from 'react-router-dom'; // Import useNavigate from react-router-dom
 import ReCAPTCHA from 'react-google-recaptcha'; // Import reCAPTCHA
 
 function TestSkinCancer() {
@@ -23,25 +23,50 @@ function TestSkinCancer() {
   const [bloodGroupError, setBloodGroupError] = useState(''); // State for blood group error
   const [emailError, setEmailError] = useState(''); // State for email error
   const [symptomsError, setSymptomsError] = useState(''); // State for symptoms error
-
+  const [isEditMode, setIsEditMode] = useState(false);
   const navigate = useNavigate(); // Initialize the navigate function
+  const location = useLocation();
+  
+ 
 
+  useEffect(() => {
+    if (location.state?.isEditMode) {
+      setIsEditMode(true);
+    } else {
+      setIsEditMode(false);
+    }
+  }, [location.state]);
   // Load data from localStorage on component mount
   useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem('skinCancerFormData'));
-    if (storedData) {
-      setName(storedData.name);
-      setAge(storedData.age);
-      setSex(storedData.sex);
-      setBloodGroup(storedData.bloodGroup);
-      setMobileNumber(storedData.mobileNumber);
-      setEmail(storedData.email);
-      setAddress(storedData.address);
-      setFamilyHistory(storedData.familyHistory);
-      setSymptoms(storedData.symptoms);
-      setSkinImages(storedData.skinImages || []);
+    if (isEditMode) {
+      const storedData = JSON.parse(localStorage.getItem('skinCancerFormData'));
+      if (storedData) {
+        setName(storedData.name);
+        setAge(storedData.age);
+        setSex(storedData.sex);
+        setBloodGroup(storedData.bloodGroup);
+        setMobileNumber(storedData.mobileNumber);
+        setEmail(storedData.email);
+        setAddress(storedData.address);
+        setFamilyHistory(storedData.familyHistory);
+        setSymptoms(storedData.symptoms);
+        setSkinImages(storedData.skinImages || []);
+      }
+    } else {
+      // If not in edit mode, clear data from state
+      setName('');
+      setAge('');
+      setSex('');
+      setBloodGroup('');
+      setMobileNumber('');
+      setEmail('');
+      setAddress('');
+      setFamilyHistory('');
+      setSymptoms('');
+      setSkinImages([]);
     }
-  }, []);
+  }, [isEditMode]);
+
 
 
    // Save data to localStorage whenever any form field changes
@@ -66,49 +91,49 @@ function TestSkinCancer() {
   const handleNameChange = (e) => {
     const value = e.target.value;
     setName(value);
-    saveToLocalStorage(); // Save to localStorage after every change
+
   };
   
   const handleAgeChange = (e) => {
     const value = e.target.value;
     setAge(value);
-    saveToLocalStorage(); // Save to localStorage after every change
+  
   };
 
   const handleSexChange = (e) => {
     const value = e.target.value;
     setSex(value);
-    saveToLocalStorage(); // Save to localStorage after every change
+   
   };
 
   const handleBloodGroupChange = (e) => {
     const value = e.target.value;
     setBloodGroup(value);
-    saveToLocalStorage(); // Save to localStorage after every change
+    
   };
 
   const handleEmailChange = (e) => {
     const value = e.target.value;
     setEmail(value);
-    saveToLocalStorage(); // Save to localStorage after every change
+   
   };
 
   const handleAddressChange = (e) => {
     const value = e.target.value;
     setAddress(value);
-    saveToLocalStorage(); // Save to localStorage after every change
+    
   };
 
   const handleFamilyHistoryChange = (e) => {
     const value = e.target.checked;
     setFamilyHistory(value);
-    saveToLocalStorage(); // Save to localStorage after every change
+    
   };
 
   const handleSymptomsChange = (e) => {
     const value = e.target.value;
     setSymptoms(value);
-    saveToLocalStorage(); // Save to localStorage after every change
+    
   };
 
 
@@ -118,7 +143,7 @@ function TestSkinCancer() {
   const handleMobileNumberChange = (e) => {
     const value = e.target.value;
     setMobileNumber(value);
-    saveToLocalStorage();
+  
 
     // Real-time validation for mobile number
     if (/^\d{10}$/.test(value) || value === '') {
@@ -204,12 +229,15 @@ function TestSkinCancer() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setErrorMessage(''); // Reset error message
-
+  
+    // First, validate the form and CAPTCHA
     if (!validateForm() || !captchaValid) {
       setErrorMessage('Please complete the CAPTCHA validation.');
       return; // If the form is invalid or CAPTCHA not validated, prevent submission
     }
-
+  
+    saveToLocalStorage(); // Call your function to save data to localStorage (if necessary)
+  
     // Convert images to Base64
     const imagePromises = skinImages.map((file) => {
       return new Promise((resolve, reject) => {
@@ -219,10 +247,11 @@ function TestSkinCancer() {
         reader.readAsDataURL(file); // Read image as Base64
       });
     });
-
+  
+    // Wait for all images to be converted to Base64
     Promise.all(imagePromises)
       .then((encodedImages) => {
-        // Pass form data along with Base64 images to the next page
+        // Prepare the form data
         const formData = {
           name,
           age,
@@ -235,17 +264,15 @@ function TestSkinCancer() {
           symptoms,
           skinImages: encodedImages, // Pass the Base64 images here
         };
-
-        navigate('/confirmation', { state: formData }); // Send data to the next page
-      }
-    
-   )
-
+  
+        // Navigate to the confirmation page with the form data
+        navigate('/confirmation', { state: formData });
+      })
       .catch((error) => {
         setErrorMessage('Error converting images. Please try again.');
       });
   };
-
+  
  
   
 

@@ -2,43 +2,82 @@ import React, { useState } from 'react';
 import imageCompression from 'browser-image-compression';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import confirmationbg from '/image/confirnmationbg.jpg';
 const Confirmation = () => {
+const apiUrl = import.meta.env.VITE_API_URL;
+
   const location = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [isImageValid, setIsImageValid] = useState(true); // State to track if the image is valid
   const formData = location.state;
 
-  const isSkinPixel = (r, g, b) => {
+  const isSkinPixelMethod1 = (r, g, b) => {
     const y = 0.299 * r + 0.587 * g + 0.114 * b;
     const cb = 128 - 0.168736 * r - 0.331264 * g + 0.5 * b;
     const cr = 128 + 0.5 * r - 0.418688 * g - 0.081312 * b;
     return y > 80 && y < 240 && cb > 85 && cb < 135 && cr > 135 && cr < 180;
   };
-
+  
+  const isSkinPixelMethod2 = (r, g, b) => {
+    const y = 0.299 * r + 0.587 * g + 0.114 * b;
+    const cb = 128 - 0.168736 * r - 0.331264 * g + 0.5 * b;
+    const cr = 128 + 0.5 * r - 0.418688 * g - 0.081312 * b;
+  
+    console.log(`RGB(${r}, ${g}, ${b}) -> Y: ${y}, Cb: ${cb}, Cr: ${cr}`);
+    return y > 60 && y < 250 && cb > 80 && cb < 140 && cr > 130 && cr < 185;
+  };
+  
+  const isSkinPixelMethod3 = (r, g, b) => {
+    const y = 0.299 * r + 0.587 * g + 0.114 * b;
+    const cb = 128 - 0.168736 * r - 0.331264 * g + 0.5 * b;
+    const cr = 128 + 0.5 * r - 0.418688 * g - 0.081312 * b;
+  
+    console.log(`RGB(${r}, ${g}, ${b}) -> Y: ${y.toFixed(2)}, Cb: ${cb.toFixed(2)}, Cr: ${cr.toFixed(2)}`);
+    return y > 60 && y < 250 && cb > 80 && cb < 140 && cr > 130 && cr < 185;
+  };
+  
   const checkCornersForSkin = (pixels, width, height) => {
     const cornerPixels = [
-      { x: 0, y: 0 },
-      { x: width - 1, y: 0 },
-      { x: 0, y: height - 1 },
-      { x: width - 1, y: height - 1 },
+      { x: 0, y: 0 }, // Top-left corner
+      { x: width - 1, y: 0 }, // Top-right corner
+      { x: 0, y: height - 1 }, // Bottom-left corner
+      { x: width - 1, y: height - 1 }, // Bottom-right corner
+      { x: Math.floor(width / 2), y: Math.floor(height / 2) }, // Center
     ];
-
-    for (const corner of cornerPixels) {
-      const index = (corner.y * width + corner.x) * 4;
+  
+    for (const point of cornerPixels) {
+      const index = (point.y * width + point.x) * 4; // Assuming RGBA format
       const r = pixels[index];
       const g = pixels[index + 1];
       const b = pixels[index + 2];
-      if (isSkinPixel(r, g, b)) {
+  
+      console.log(`Checking point (${point.x}, ${point.y})`);
+  
+      // Count how many methods agree
+      let skinVotes = 0;
+      if (isSkinPixelMethod1(r, g, b)) skinVotes++;
+      if (isSkinPixelMethod2(r, g, b)) skinVotes++;
+      if (isSkinPixelMethod3(r, g, b)) skinVotes++;
+  
+      if (skinVotes >= 2) {
+        console.log(`Skin pixel detected at (${point.x}, ${point.y}) by majority.`);
         return true;
       }
     }
+  
+    console.log("No skin pixels detected in the sampled regions.");
     return false;
   };
-
+  
+  
+  const handleEdit = () => {
+    // Go back to the form page, with the data kept intact (since it's in localStorage)
+    navigate('/test-skin-cancer',{ state: { isEditMode: true } });
+  };
   const handleConfirm = async () => {
     setLoading(true);
     setIsImageValid(true);
@@ -186,7 +225,7 @@ toast.update(loadingToast, {
           const compressedFileName = `${formData.name.replace(/\s+/g, '_')}_${formData.email.replace('@', '_at_').replace(/\./g, '_dot_')}.jpg`;
           form.append('skinImages', compressedBlob, compressedFileName);
 
-          axios.post('http://localhost:5000/api/patients', form, {
+          axios.post(`${apiUrl}/api/patients`, form, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
@@ -293,7 +332,7 @@ toast.update(loadingToast, {
 
         <div className="mt-4">
   <button
-    onClick={() => navigate(-1)}
+    onClick={handleEdit}
     className={`bg-yellow-500 text-white py-2 px-4 rounded ${loading ? 'cursor-not-allowed opacity-50' : ''}`}
     disabled={loading}
   >
@@ -413,7 +452,7 @@ export default Confirmation;
 //           form.append('skinImages', compressedBlob, compressedFileName);
 
 //           // Send the FormData object to the backend
-//           axios.post('http://localhost:5000/api/patients', form, {
+//           axios.post('${apiUrl}/api/patients', form, {
 //             headers: {
 //               'Content-Type': 'multipart/form-data',
 //             },

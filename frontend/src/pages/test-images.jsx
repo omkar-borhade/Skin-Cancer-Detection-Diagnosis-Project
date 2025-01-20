@@ -25,7 +25,7 @@ const TestResults = () => {
   const location = useLocation();
   const navigate = useNavigate(); // Use navigate to redirect to the report page
   const { prediction, skinImages, patient } = location.state || {}; // Destructure the state
-  console.log("prediction", prediction);
+  console.log("patient", patient);
 
   // Check if prediction data exists
   if (!prediction || prediction.length === 0) {

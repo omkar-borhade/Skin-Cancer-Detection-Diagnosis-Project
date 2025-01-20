@@ -3,6 +3,8 @@ import axios from 'axios';
 import DermatologistCard from './DermatologistCard';
 
 const NearbyDoctors = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const [loading, setLoading] = useState(true);
   const [dermatologists, setDermatologists] = useState([]);
   const [location, setLocation] = useState(null);
@@ -29,7 +31,7 @@ const NearbyDoctors = () => {
     if (location) {
       setLoading(true);
       axios
-        .get(`http://localhost:5000/api/nearby?lat=${location.lat}&lng=${location.lng}`)
+        .get(`${apiUrl}/api/nearby?lat=${location.lat}&lng=${location.lng}`)
         .then((response) => {
           // Assuming the response includes the necessary fields: name, address, lat, lng, specialization, contact, hospitalName
           const dermatologistsData = response.data;
@@ -45,7 +47,7 @@ const NearbyDoctors = () => {
 
   return (
     <div className="container mx-auto px-6 py-8">
-      <h3 className="text-3xl font-extrabold text-center text-gray-800 mb-8">Nearby Docter</h3>
+      <h3 className="text-3xl font-extrabold text-center text-gray-800 mb-8">Near By Hospital</h3>
       {loading ? (
         <div className="flex justify-center items-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>

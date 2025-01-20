@@ -8,7 +8,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "concurrently \"npm run dev --prefix backend\" \"npm start --prefix frontend\""
+    "start": "concurrently \"npm run dev --prefix backend\" \"npm start --prefix frontend\"",
+     "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\" \"cd backend && python app.py\""
 
   },
   "keywords": [],

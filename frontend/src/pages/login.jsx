@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { loginSuccess } from '../features/auth/authSlice'; // Import loginSuccess action
 
 function Login() {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,7 +30,7 @@ function Login() {
     const loginData = { email, password };
 
     try {
-      const response = await axios.post('http://localhost:5000/api/login', loginData);
+      const response = await axios.post(`${apiUrl}/api/login`, loginData);
 
       // Dispatch login success with user and token to Redux
       dispatch(loginSuccess({
@@ -71,7 +72,7 @@ function Login() {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/register', registerData);
+      const response = await axios.post(`${apiUrl}/api/register`, registerData);
 
       // Dispatch login success after registration
       dispatch(loginSuccess({

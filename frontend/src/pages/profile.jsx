@@ -6,29 +6,29 @@ const Profile = () => {
   const user = useSelector((state) => state.auth.user); // Access user data from Redux store
 
   if (!user) {
-    return <p className="text-center">No user information available.</p>;
+    return <p className="text-center text-gray-600">No user information available.</p>;
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4">Profile</h2>
-      <div className="mb-4">
-        <strong>Name:</strong> {user.name}
+    <div className="max-w-3xl mx-auto p-8 bg-gradient-to-r from-blue-50 to-indigo-100 rounded-lg shadow-xl">
+      <div className="text-center mb-6">
+        <h2 className="text-3xl font-extrabold text-indigo-700">Your Profile</h2>
+        <p className="text-lg text-gray-500">Here are your details</p>
       </div>
-      <div className="mb-4">
-        <strong>Email:</strong> {user.email}
-      </div>
-      {/* Add more user fields as needed */}
-      <div className="mt-6">
-        <button
-          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200"
-          onClick={() => {
-            // Add logic to edit the profile or navigate to edit page
-            console.log('Edit Profile Clicked');
-          }}
-        >
-          Edit Profile
-        </button>
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <div className="mb-6">
+          <div className="flex justify-between items-center">
+            <strong className="text-xl text-gray-700">Name:</strong>
+            <span className="text-lg text-gray-900">{user.name}</span>
+          </div>
+        </div>
+        <div className="mb-6">
+          <div className="flex justify-between items-center">
+            <strong className="text-xl text-gray-700">Email:</strong>
+            <span className="text-lg text-gray-900">{user.email}</span>
+          </div>
+        </div>
+        {/* Add more user fields as needed */}
       </div>
     </div>
   );

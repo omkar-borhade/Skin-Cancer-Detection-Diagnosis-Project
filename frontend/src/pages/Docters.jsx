@@ -1,6 +1,6 @@
 // src/components/Doctors.js
 import React from 'react';
-
+import NearbyDoctors from '../components/NearbyDoctors';
 const doctorsData = [
   {
     name: "Dr. Mukul Gharote",
@@ -44,6 +44,7 @@ const Doctors = () => {
           </div>
         ))}
       </div>
+      <NearbyDoctors/>
     </div>
   );
 };

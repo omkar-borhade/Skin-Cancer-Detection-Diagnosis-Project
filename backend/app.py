@@ -1,15 +1,21 @@
+import logging
+from dotenv import load_dotenv
 import os
 import cv2
 import numpy as np
 from flask import Flask, request, jsonify
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
-from werkzeug.utils import secure_filename
+import time
 
 app = Flask(__name__)
+load_dotenv()
 
-# Path to your pre-trained model
-MODEL_PATH = r"F:\\skin\\backend\\scripts\\my_skin_disease_pred_model (2).h5"
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+MODEL_PATH = os.getenv('DIAGNOSIS_MODEL')  # modal is here.h5 file
 
 # Define class names (Update this according to your model's output classes)
 class_names = [
@@ -35,10 +41,13 @@ categories = {
 
 # Load the pre-trained model
 try:
-    model = load_model(MODEL_PATH)
-    print("Model loaded successfully!")
+    if MODEL_PATH and os.path.exists(MODEL_PATH):
+        model = load_model(MODEL_PATH)
+        logger.info("Model loaded successfully.")
+    else:
+        raise FileNotFoundError(f"Model file not found at path: {MODEL_PATH}")
 except Exception as e:
-    print(f"Error loading model: {e}")
+    logger.error(f"Error loading model: {e}")
     model = None
 
 # Directory to save uploaded images (we'll overwrite this image with every new upload)
@@ -52,40 +61,59 @@ def allowed_file(filename):
     """Check if the uploaded file has an allowed extension."""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def is_valid_image(image_path):
+    """Validate image file content."""
+    try:
+        image = cv2.imread(image_path)
+        if image is None:
+            return False
+        return True
+    except Exception as e:
+        logger.error(f"Invalid image content: {e}")
+        return False
+
 def preprocess_image(image_path):
     """Preprocess the image for prediction."""
-    image = load_img(image_path, target_size=(64, 64))  # Resize to model's input size
-    image = img_to_array(image) / 255.0  # Normalize pixel values
-    image = np.expand_dims(image, axis=0)  # Add batch dimension
-    return image
+    try:
+        image = load_img(image_path, target_size=(64, 64))  # Resize to model's input size
+        image = img_to_array(image) / 255.0  # Normalize pixel values
+        image = np.expand_dims(image, axis=0)  # Add batch dimension
+        return image
+    except Exception as e:
+        logger.error(f"Error during image preprocessing: {e}")
+        raise
 
 def remove_hair(image_path):
     """Remove hair from the image without blurring."""
-    image = cv2.imread(image_path)
-    if image is None:
-        raise ValueError("Invalid image path or format.")
+    try:
+        image = cv2.imread(image_path)
+        if image is None:
+            raise ValueError("Invalid image path or format.")
 
-    original_image = image.copy()  # Keep the original image for comparison
+        original_image = image.copy()  # Keep the original image for comparison
 
-    # Convert the image to grayscale
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        # Convert the image to grayscale
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    # Detect hair using morphological operations
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (17, 17))
-    blackhat = cv2.morphologyEx(gray, cv2.MORPH_BLACKHAT, kernel)
+        # Detect hair using morphological operations
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (17, 17))
+        blackhat = cv2.morphologyEx(gray, cv2.MORPH_BLACKHAT, kernel)
 
-    # Threshold the blackhat image to create a mask for hair regions
-    _, hair_mask = cv2.threshold(blackhat, 10, 255, cv2.THRESH_BINARY)
+        # Threshold the blackhat image to create a mask for hair regions
+        _, hair_mask = cv2.threshold(blackhat, 10, 255, cv2.THRESH_BINARY)
 
-    # Inpaint the detected hair regions with minimal blur
-    inpainted_image = cv2.inpaint(image, hair_mask, inpaintRadius=3, flags=cv2.INPAINT_NS)  # Use Navier-Stokes inpainting
+        # Inpaint the detected hair regions with minimal blur
+        inpainted_image = cv2.inpaint(image, hair_mask, inpaintRadius=3, flags=cv2.INPAINT_NS)  # Use Navier-Stokes inpainting
 
-    # Compare if the processed image is different from the original image
-    if np.array_equal(original_image, inpainted_image):
-        return None  # No change, return None to indicate no modification
+        # Compare if the processed image is different from the original image
+        if np.array_equal(original_image, inpainted_image):
+            return None  # No change, return None to indicate no modification
 
-    # Return the modified image directly without saving
-    return inpainted_image  # Return the inpainted image directly
+        # Return the modified image directly without saving
+        return inpainted_image  # Return the inpainted image directly
+    except Exception as e:
+        logger.error(f"Error during hair removal: {e}")
+        raise
 
 def predict(image_path):
     """Perform prediction on the provided image."""
@@ -100,7 +128,13 @@ def predict(image_path):
         image = preprocess_image(image_path)
 
         # Perform prediction
+        start_time = time.time()
         prediction = model.predict(image)[0]  # Prediction is a list of probabilities
+        inference_time = time.time() - start_time
+
+        # Log inference time
+        logger.info(f"Inference completed in {inference_time:.2f} seconds.")
+
         predicted_class = np.argmax(prediction, axis=0)  # Index of the highest probability
 
         probabilities = prediction  # All class probabilities
@@ -111,11 +145,13 @@ def predict(image_path):
             "predicted_class": predicted_class_name,
             "category": predicted_category,  # Add the cancer classification category
             "probabilities": {class_names[i]: float(prob) for i, prob in enumerate(probabilities)},
+            "inference_time": round(inference_time, 2)  # Add inference time to the result
         }
         return result
 
     except Exception as e:
-        return {"error": f"Error during prediction: {e}"}
+        logger.error(f"Error during prediction: {e}")
+        return {"error": "There was an issue during prediction."}
 
 @app.route('/submit_patient_data', methods=['POST'])
 def submit_patient_data():
@@ -134,7 +170,13 @@ def submit_patient_data():
         filename = file_info['originalname']
 
         if not os.path.exists(file_path):
+            logger.warning(f"File {filename} not found at {file_path}.")
             return jsonify({'message': f'File {filename} not found'}), 400
+
+        # Check for valid file content
+        if not allowed_file(filename) or not is_valid_image(file_path):
+            logger.warning(f"Invalid file content for {filename}.")
+            return jsonify({'message': f'Invalid image file content for {filename}'}), 400
 
         # Remove hair from the image and process it, if applicable
         try:
@@ -142,17 +184,13 @@ def submit_patient_data():
             if processed_image is None:
                 processed_image = cv2.imread(file_path)  # Use the original image if no modification occurs
         except Exception as e:
+            logger.error(f"Error processing file {filename}: {e}")
             return jsonify({'message': f'Error processing file {filename}: {e}'}), 500
 
-        # Save processed image temporarily to perform prediction
-        temp_processed_path = "temp_processed_image.jpg"
-        cv2.imwrite(temp_processed_path, processed_image)
-
         # Perform prediction on the processed (or original) image
-        result = predict(temp_processed_path)  # We use the processed or original file
+        result = predict(file_path)  # We use the processed or original file directly
         predictions.append({
             "file": filename,
-            "processed_image": temp_processed_path,
             "result": result
         })
 
@@ -164,11 +202,15 @@ def submit_patient_data():
     }), 200
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    # Get the port from the environment, default to 5000 if not set
+    port = int(os.getenv('FLASK_PORT', 5001))  # Default to 5001 if FLASK_PORT is not defined
+    app.run(debug=True, port=port)
 
 
 
+# DIAGNOSIS_MODEL=./DiagnosisModel/my_skin_disease_pred_model (2).h5
 
+# MODEL_PATH=r'F:\skin\backend\DiagnosisModel\my_skin_disease_pred_model (2).h5'
 
 
 # import os

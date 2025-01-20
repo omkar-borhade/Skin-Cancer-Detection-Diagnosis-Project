@@ -22,7 +22,7 @@ import ContactUS from './pages/ContactUs';
 import TestImage from './pages/test-images';
 import NearbyDoctors from './components/NearbyDoctors';
 import GeneratedReport from './components/GeneratedReport';
-
+import ReportPage from './pages/ReportPage';
 
 
 
@@ -57,7 +57,7 @@ function App() {
               <Route path="/new-patients" element={<NewPatients />} />
 
               
-
+              <Route path="/report/:reportId" component={ReportPage} />
             </Routes>
           </div>
           <Footer />

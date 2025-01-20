@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import Barcode from 'react-barcode';
 import { v4 as uuidv4 } from 'uuid';
@@ -32,55 +32,102 @@ const GeneratedReport = () => {
     predicted_class,
     category,
     topPredictions,
+    
   } = reportData;
 
-  const { name, age, sex, bloodGroup, mobileNumber, email, address } = patient || {};
+  const { name, age, sex, bloodGroup, mobileNumber, email, address,_id, } = patient || {};
 
+
+
+  
+
+  
   // Generate a unique report ID (could also use UUID or other unique identifiers)
-  const reportId = uuidv4();
-  const reportUrl = `${window.location.origin}/report/${reportId}`;
+  // Generate a unique report ID based on the patient _id
+  const [reportId, setReportId] = useState(null);
 
- const handlePrint = () => {
-  const printSection = document.getElementById('print-section');
-
-  if (printSection) {
-    html2canvas(printSection, { 
-      scale: 2,
-      x: 10, // Left margin (10px)
-      y: 10, // Top margin (10px)
-      width: printSection.offsetWidth - 20, // Subtracting left and right margin
-      height: printSection.offsetHeight - 20 // Subtracting top and bottom margin
-    }).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4',
-      });
-
-      const imgWidth = 210; // A4 width in mm
-      const pageHeight = 297; // A4 height in mm
+  useEffect(() => {
+    if (_id) {
+      let storedReportId = localStorage.getItem(`reportId-${_id}`);
       
+      if (!storedReportId) {
+        storedReportId = Math.floor(Math.random() * 10000).toString();
+        localStorage.setItem(`reportId-${_id}`, storedReportId);
+      }
 
-      // Scale the image to fit within the page
-      const scaleFactor = Math.min(imgWidth / canvas.width, pageHeight / canvas.height);
-      const scaledWidth = canvas.width * scaleFactor;
-      const scaledHeight = canvas.height * scaleFactor;
+      setReportId(storedReportId);
+    }
+  }, [_id]);
+  
+  useEffect(() => {
+    // Save report data to localStorage
+    if (reportId && reportData) {
+      localStorage.setItem(`reportData-${reportId}`, JSON.stringify(reportData));
+    }
+  }, [reportId, reportData]);
+  
 
-      // Center the image on the page
-      const xOffset = (imgWidth - scaledWidth) / 2;
-      const yOffset = (pageHeight - scaledHeight) / 2;
+  const reportUrl = `${window.location.origin}/report/${reportId}`;
+console.log(reportUrl)
+  // State to hold the generated PDF-----------------------------------------------------------------
+const [pdfData, setPdfData] = useState(null);
 
-      // Add the scaled image to the PDF
-      pdf.addImage(imgData, 'PNG', xOffset, yOffset, scaledWidth, scaledHeight);
+useEffect(() => {
+  const printSection = document.getElementById('print-section');
+  if (printSection) {
+    // Set a timeout to delay PDF generation by 3 seconds
+    const timer = setTimeout(() => {
+      html2canvas(printSection, {
+        scale: 2,
+        x: 10, // Left margin (10px)
+        y: 10, // Top margin (10px)
+        width: printSection.offsetWidth - 20, // Subtracting left and right margin
+        height: printSection.offsetHeight - 20, // Subtracting top and bottom margin
+      }).then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4',
+        });
 
-      // Save the PDF as 'SkinCancerReport.pdf'
-      pdf.save('SkinCancerReport.pdf');
-    });
+        const imgWidth = 210; // A4 width in mm
+        const pageHeight = 297; // A4 height in mm
+
+        // Scale the image to fit within the page
+        const scaleFactor = Math.min(imgWidth / canvas.width, pageHeight / canvas.height);
+        const scaledWidth = canvas.width * scaleFactor;
+        const scaledHeight = canvas.height * scaleFactor;
+
+        // Center the image on the page
+        const xOffset = (imgWidth - scaledWidth) / 2;
+        const yOffset = (pageHeight - scaledHeight) / 2;
+
+        // Add the scaled image to the PDF
+        pdf.addImage(imgData, 'PNG', xOffset, yOffset, scaledWidth, scaledHeight);
+
+        // Store the generated PDF in state
+        setPdfData(pdf);
+      });
+    }, 3000); // 3 seconds delay
+
+    // Cleanup function to clear the timeout if the component is unmounted
+    return () => clearTimeout(timer);
+
   } else {
     console.error("Print section not found.");
   }
-};
+}, [_id]); 
+
+
+  // Handle PDF download when the button is clicked---------------------------------------
+  const handleDownload = () => {
+    if (pdfData) {
+      pdfData.save('SkinCancerReport.pdf');
+    } else {
+      console.error("PDF is not generated yet.");
+    }
+  };
 
   
 const handleEmail = () => {
@@ -129,7 +176,7 @@ const handleEmail = () => {
     responsive: true,
     maintainAspectRatio: false,
   };
-
+console.log("id",_id)
   return (
     <div className="flex flex-col justify-center items-center min-h-screen p-8 bg-gradient-to-r from-blue-50 to-blue-100">
       <div id="print-section"  className="bg-white p-9 rounded-2xl shadow-lg w-full max-w-4xl space-y-6 border border-gray-200">
@@ -158,7 +205,7 @@ const handleEmail = () => {
     {/* Date and Report ID */}
     <div className="text-right">
       <p className="text-sm text-gray-600">Date: {new Date().toLocaleDateString()}</p>
-      <p className="text-sm text-gray-600">Report ID: {Math.floor(Math.random() * 10000)}</p>
+      <p className="text-sm text-gray-600">Report ID: {reportId}</p>
     </div>
   </div>
   
@@ -171,8 +218,9 @@ const handleEmail = () => {
           <div className="flex justify-between items-center">
             <h3 className="text-2xl font-semibold text-gray-700">Patient Information</h3>
             <div className="flex justify-end m-2 w-60">
-              <Barcode value={uuidv4()} width={1} height={30} />
-            </div>
+      {/* Display the barcode based on the unique fingerprint _id */}
+      <Barcode value={_id} width={1} height={30}   fontSize={7}/>
+    </div>        
           </div>
           <div className="bg-gray-50 p-4 rounded-lg mt-4">
             <table className="w-full text-sm text-gray-600">
@@ -277,20 +325,27 @@ const handleEmail = () => {
         </footer>
       </div>
       {/* Action Buttons */}
-      <div className="flex justify-between items-center space-x-4 pt-4">
-          <button
-            className="bg-blue-600 text-white py-2 px-6 rounded-lg shadow-md hover:bg-blue-700"
-            onClick={handlePrint}
-          >
-            Download PDF
-          </button>
-          <button
-            className="bg-blue-600 text-white py-2 px-6 rounded-lg shadow-md hover:bg-blue-700"
-            onClick={handleEmail}
-          >
-            Email Report
-          </button>
-        </div>
+<div className="flex justify-between items-center space-x-4 pt-4">
+  <button
+    className="bg-blue-600 text-white py-2 px-6 rounded-lg shadow-md hover:bg-blue-700"
+    onClick={handleDownload}
+  >
+    Download PDF
+  </button>
+  <button
+    className="bg-blue-600 text-white py-2 px-6 rounded-lg shadow-md hover:bg-blue-700"
+    onClick={handleEmail}
+  >
+    Email Report
+  </button>
+  <button
+    className="bg-blue-600 text-white py-2 px-6 rounded-lg shadow-md hover:bg-blue-700"
+    
+  >
+    Find Nearby Doctors
+  </button>
+</div>
+
     </div>
   );
 };
