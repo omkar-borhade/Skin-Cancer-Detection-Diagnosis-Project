@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'; // Import useEffect here
-import { FaUser, FaPhone, FaEnvelope, FaMapMarkerAlt, FaFileUpload, FaCheckCircle } from 'react-icons/fa';
+import { FaCamera,FaUser, FaPhone, FaEnvelope, FaMapMarkerAlt, FaFileUpload, FaCheckCircle } from 'react-icons/fa';
 import FormBG from '/image/FormBG.jpg'; // Adjust the path as necessary
 import axios from 'axios'; // Import Axios
 import { useNavigate,useLocation } from 'react-router-dom'; // Import useNavigate from react-router-dom
@@ -159,6 +159,18 @@ function TestSkinCancer() {
     setSkinImages(files); // Store selected files directly
     
   };
+  
+  const handleCameraCapture = (e) => {
+    const files = Array.from(e.target.files);
+    
+    if (files.length > 0) {
+      console.log("Captured image:", files[0]); // Log the captured image for debugging
+      setSkinImages((prevImages) => [...prevImages, ...files]); // Append to existing images
+    }
+  };
+  
+
+  
 
   const onCaptchaChange = (value) => {
     setCaptchaValid(value ? true : false);
@@ -425,18 +437,35 @@ function TestSkinCancer() {
 
           {/* Skin Images Upload */}
           <div className="mb-3">
-            <label className="flex items-center">
-              <FaFileUpload className="mr-2 text-gray-500" />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                multiple
-                className="p-2 border border-gray-300 rounded"
-                aria-label="Skin Images Upload"
-              />
-            </label>
-          </div>
+  <label className="flex items-center mb-2 space-x-4">
+    <FaFileUpload className="mr-2 text-gray-500" />
+    <input
+      type="file"
+      accept="image/*"
+      onChange={handleImageChange}
+      multiple
+      className="p-2 border border-gray-300 rounded"
+      aria-label="Skin Images Upload"
+    />
+   
+
+    {/* Camera Button */}
+    <label htmlFor="cameraInput">
+      <FaCamera className="text-gray-500 cursor-pointer" />
+    </label>
+    <input
+      type="file"
+      accept="image/*"
+      capture="environment"
+      onChange={handleCameraCapture}
+      id="cameraInput"
+      className="hidden"  // Hides the input field, only the camera icon is shown
+      aria-label="Capture Image from Camera"
+    />
+  </label>
+</div>
+
+
 
           {/* Google reCAPTCHA */}
           <div className="mb-3">

@@ -26,7 +26,7 @@ const FAQ = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Frequently Asked Questions</h1>
       <div className="space-y-4">
         {faqs.map((faq, index) => (
@@ -45,13 +45,17 @@ const AccordionItem = ({ question, answer }) => {
   };
 
   return (
-    <div className={`bg-white rounded-md shadow-md ${isOpen ? 'shadow-lg' : ''} transition-shadow duration-300`}>
+    <div
+      className={`bg-white rounded-md shadow-md ${isOpen ? 'shadow-lg' : ''} transition-shadow duration-300`}
+    >
       <button
-        className="flex justify-between w-full p-4 text-left font-semibold text-gray-800 focus:outline-none hover:bg-gray-100"
+        className="flex justify-between items-center w-full p-4 text-left font-semibold text-gray-800 focus:outline-none hover:bg-gray-100 transition-all duration-200"
         onClick={toggleAccordion}
       >
         <span className="flex-grow">{question}</span>
-        <span className={`transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
+        <span
+          className={`transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+        >
           ▼
         </span>
       </button>

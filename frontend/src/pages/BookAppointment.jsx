@@ -7,7 +7,16 @@ const BookAppointment = () => {
     email: '',
     date: '',
     time: '',
+    doctor: '', // New field to store selected doctor
   });
+
+  const doctorsList = [
+    { id: 1, name: 'Dr. John Smith' },
+    { id: 2, name: 'Dr. Sarah Johnson' },
+    { id: 3, name: 'Dr. Michael Brown' },
+    { id: 4, name: 'Dr. Emily Davis' },
+    { id: 5, name: 'Dr. David Wilson' },
+  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,7 +27,7 @@ const BookAppointment = () => {
     e.preventDefault();
     // Handle appointment booking logic (e.g., send to API)
     console.log('Appointment booked:', formData);
-    setFormData({ name: '', email: '', date: '', time: '' });
+    setFormData({ name: '', email: '', date: '', time: '', doctor: '' });
   };
 
   return (
@@ -66,6 +75,23 @@ const BookAppointment = () => {
             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
             required
           />
+        </div>
+        {/* Select Doctor Dropdown */}
+        <div className="mb-4">
+          <select
+            name="doctor"
+            value={formData.doctor}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            required
+          >
+            <option value="">Select Doctor</option>
+            {doctorsList.map((doctor) => (
+              <option key={doctor.id} value={doctor.name}>
+                {doctor.name}
+              </option>
+            ))}
+          </select>
         </div>
         <button 
           type="submit" 

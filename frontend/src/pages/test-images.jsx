@@ -102,7 +102,10 @@ const TestResults = () => {
       return 'Cancerous';
     } else if (className === 'Actinic Keratoses' || className === 'Vascular Lesions') {
       return 'Pre-cancerous';
-    } else {
+    } else if(className ==='Normal Skin' ){
+      return'Healthy  (no cancer detected in image)'
+
+    }else{
       return 'Non-cancerous';
     }
   };

@@ -19,7 +19,7 @@ const PrivacyPolicy = () => {
         <p className="mb-4 text-gray-600">
           We may collect information about you in a variety of ways, including:
         </p>
-        <ul className="list-disc ml-5 mb-4 text-gray-600">
+        <ul className="list-disc ml-5 mb-4 text-gray-600 text-sm sm:text-base">
           <li>Personal Data: Personally identifiable information, such as your name, email address, and telephone number.</li>
           <li>Derivative Data: Information our servers automatically collect when you access the site, such as your IP address, browser type, operating system, access times, and the pages you have viewed directly before and after accessing the site.</li>
         </ul>
@@ -31,7 +31,7 @@ const PrivacyPolicy = () => {
         <p className="mb-4 text-gray-600">
           We may use information collected about you via the site to:
         </p>
-        <ul className="list-disc ml-5 mb-4 text-gray-600">
+        <ul className="list-disc ml-5 mb-4 text-gray-600 text-sm sm:text-base">
           <li>Create and manage your account.</li>
           <li>Process your transactions and send you related information, including purchase confirmations and invoices.</li>
           <li>Send you newsletters and updates.</li>
@@ -46,7 +46,7 @@ const PrivacyPolicy = () => {
         <p className="mb-4 text-gray-600">
           We may share information we have collected about you in certain situations. Your information may be disclosed as follows:
         </p>
-        <ul className="list-disc ml-5 mb-4 text-gray-600">
+        <ul className="list-disc ml-5 mb-4 text-gray-600 text-sm sm:text-base">
           <li>By Law or to Protect Rights: If we believe the release of information about you is necessary to respond to legal process, to investigate or remedy potential violations of our policies, or to protect the rights, property, and safety of others, we may share your information as permitted or required by any applicable law, rule, or regulation.</li>
           <li>Third-Party Service Providers: We may share your information with third parties that perform services for us or on our behalf, including payment processing, data analysis, email delivery, hosting services, customer service, and marketing assistance.</li>
         </ul>
@@ -74,7 +74,7 @@ const PrivacyPolicy = () => {
         <p className="mb-4 text-gray-600">
           You may at any time review or change the information in your account or terminate your account by:
         </p>
-        <ul className="list-disc ml-5 mb-4 text-gray-600">
+        <ul className="list-disc ml-5 mb-4 text-gray-600 text-sm sm:text-base">
           <li>Logging into your account settings and updating your account.</li>
           <li>Contacting us using the contact information provided below.</li>
         </ul>

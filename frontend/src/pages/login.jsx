@@ -99,15 +99,18 @@ function Login() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="flex flex-row bg-white rounded-lg shadow-lg max-w-4xl w-full">
-        <div className="w-1/2 h-full flex items-center justify-center">
+      <div className="flex flex-col md:flex-row bg-white rounded-lg shadow-lg max-w-4xl w-full">
+        {/* Image Section */}
+        <div className="w-full md:w-1/2 h-full flex items-center justify-center">
           <img
             src="/image/login.jpg"
             alt="Login"
-            className="w-full h-auto max-h-full object-cover rounded-l-lg"
+            className="w-full h-auto max-h-full object-cover rounded-t-lg md:rounded-l-lg"
           />
         </div>
-        <div className="w-1/2 h-full p-8 flex flex-col justify-center">
+
+        {/* Form Section */}
+        <div className="w-full md:w-1/2 h-full p-8 flex flex-col justify-center">
           <div className="flex justify-center mb-6">
             <button
               className={`mr-4 p-2 text-lg font-bold ${isLogin ? 'text-blue-500 border-b-2 border-blue-500' : ''}`}

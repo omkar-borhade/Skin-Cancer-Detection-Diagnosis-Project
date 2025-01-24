@@ -6,17 +6,17 @@ import backgroundImage from '/image/Aboutbg.jpg';
 function AboutUs() {
   return (
     <div
-      className="relative flex items-center justify-end bg-cover bg-center"
+      className="relative flex items-center justify-center bg-cover bg-center overflow-x-hidden"
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
         width: '100vw',
-        minHeight: '80vh', // Adjust this value as needed
+        minHeight: '100vh', // Ensure full viewport height
       }}
     >
-      <div className="bg-white bg-opacity-80 p-8 max-w-3xl mr-10 rounded-lg shadow-lg z-10">
+      <div className="bg-white bg-opacity-80 p-8 max-w-3xl mx-auto rounded-lg shadow-lg z-10">
         <h1 className="text-4xl font-extrabold mb-6 text-center text-gray-900 animate__animated animate__fadeInDown">
           About Us
         </h1>

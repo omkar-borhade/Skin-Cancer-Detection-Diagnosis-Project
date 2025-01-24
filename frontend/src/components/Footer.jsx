@@ -14,9 +14,8 @@ const Footer = () => {
               <li><a href="/#" className="hover:underline">Skin Cancer Screening</a></li>
               <li><a href="/#" className="hover:underline">Diagnosis and Treatment</a></li>
               <li><a href="/#" className="hover:underline">Early Detection Programs</a></li>
-              <li><a href="/#" className="hover:underline">Telehealth Consultations</a></li>
               <li><a href="/#" className="hover:underline">Patient Education Resources</a></li>
-              <li><a href="/#" className="hover:underline">Support for Patients and Families</a></li>
+              
             </ul>
           </div>
 
@@ -26,8 +25,6 @@ const Footer = () => {
             <ul className="text-center sm:text-left space-y-2">
               <li><a href="/new-patients" className="hover:underline">New Patients</a></li>
               <li><a href="/feedback" className="hover:underline">Feedback</a></li>
-              <li><a href="/#" className="hover:underline">Appointments & Fees</a></li>
-              <li><a href="/#" className="hover:underline">Map & Parking</a></li>
               <li><a href="/book-appointment" className="hover:underline">Book an Appointment</a></li>
             </ul>
           </div>
@@ -50,8 +47,7 @@ const Footer = () => {
             <ul className="text-center sm:text-left space-y-2">
               <li><a href="/blog" className="hover:underline">Blog</a></li>
               <li><a href="community-support" className="hover:underline">Community Support</a></li>
-              <li><a href="/#" className="hover:underline">Research Articles</a></li>
-              <li><a href="/#" className="hover:underline">Patient Testimonials</a></li>
+              
             </ul>
           </div>
         </div>

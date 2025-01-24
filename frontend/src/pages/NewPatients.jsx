@@ -9,7 +9,7 @@ const NewPatients = () => {
         <p className="mb-4 text-gray-600 text-center">
           We're glad to have you! Here are some important resources to get started:
         </p>
-        <ul className="list-disc list-inside space-y-2">
+        <ul className="list-disc list-inside space-y-2 text-lg sm:text-base">
           <li>
             <a
               href="/faq"
