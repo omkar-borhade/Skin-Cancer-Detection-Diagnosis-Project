@@ -7,9 +7,6 @@ from flask import Flask, request, jsonify
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import time
-import requests
-from io import BytesIO
-from PIL import Image
 
 app = Flask(__name__)
 load_dotenv()
@@ -42,7 +39,7 @@ categories = {
     'Melanoma': 'Cancerous',  # mel
     'Melanocytic Nevi': 'Non-cancerous',  # nv
     'Vascular Lesions': 'Non-cancerous' , # vsc
-    'Normal Skin': 'Healthy',
+     'Normal Skin': 'Healthy',
 }
 
 # Load the pre-trained model
@@ -57,9 +54,10 @@ except Exception as e:
     skin_normal_model = None
     diagnosis_model = None
 
-UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+
+# Directory to save uploaded images (we'll overwrite this image with every new upload)
+UPLOAD_FOLDER = 'uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Allowed image extensions
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
@@ -186,60 +184,68 @@ def submit_patient_data():
     """Endpoint to handle patient data submission, including skin images."""
     data = request.get_json()
 
-    # Extract image URLs and patient data
+    # Extract files and patient data
     skin_images = data.get('skinImages', [])
 
     if not skin_images:
-        return jsonify({'message': 'No images received'}), 400
+        return jsonify({'message': 'No files received'}), 400
 
     predictions = []
     for file_info in skin_images:
-        image_url = file_info['url']  # Assuming 'url' is the key for the image URL
+        file_path = file_info['path']
         filename = file_info['originalname']
 
-        # Fetch the image from the URL
-        try:
-            response = requests.get(image_url)
-            response.raise_for_status()  # Ensure the request was successful
-            image_bytes = BytesIO(response.content)
-            image = Image.open(image_bytes)
-            image_path = os.path.join(UPLOAD_FOLDER, filename)
-            image.save(image_path)  # Optionally save it locally, if needed for logging or processing
-        except requests.exceptions.RequestException as e:
-            logger.error(f"Error downloading image {filename}: {e}")
-            return jsonify({'message': f'Error downloading image {filename}'}), 400
-        except Exception as e:
-            logger.error(f"Error processing image from URL {image_url}: {e}")
-            return jsonify({'message': f'Error processing image from URL {image_url}'}), 400
+        if not os.path.exists(file_path):
+            logger.warning(f"File {filename} not found at {file_path}.")
+            return jsonify({'message': f'File {filename} not found'}), 400
 
-        # Validate the image content
-        if not allowed_file(filename) or not is_valid_image(image_path):
-            logger.warning(f"Invalid image content for {filename}.")
+        # Check for valid file content
+        if not allowed_file(filename) or not is_valid_image(file_path):
+            logger.warning(f"Invalid file content for {filename}.")
             return jsonify({'message': f'Invalid image file content for {filename}'}), 400
 
-        # Remove hair from the image and process it
+        # Remove hair from the image and process it, if applicable
         try:
-            processed_image = remove_hair(image_path)
+            processed_image = remove_hair(file_path)  # If no hair is removed, return None
             if processed_image is None:
-                processed_image = cv2.imread(image_path)
+                processed_image = cv2.imread(file_path)  # Use the original image if no modification occurs
         except Exception as e:
             logger.error(f"Error processing file {filename}: {e}")
-            return jsonify({'message': f'Error processing image {filename}'}), 400
+            return jsonify({'message': f'Error processing file {filename}: {e}'}), 500
 
-        # Predict if the skin is normal or cancerous
-        normal_or_cancerous_result = predict_skin_normal_or_cancerous(image_path)
-        if normal_or_cancerous_result == 'Cancerous':
-            diagnosis_result = predict_diagnosis(image_path)
+         # First, check if the skin is normal or cancerous
+        skin_status = predict_skin_normal_or_cancerous(file_path)
+
+        if skin_status == "Cancerous":
+            # If cancerous, proceed with further diagnosis
+            result = predict_diagnosis(file_path)
         else:
-            diagnosis_result = {"predicted_class": "Normal Skin", "category": "Healthy", "probabilities": {}, "inference_time": 0}
+            # If normal, return normal skin result
+            predicted_class_name = 'Normal Skin'
+            predicted_category = categories.get(predicted_class_name, "Unknown")
+            result = {
+                "predicted_class": predicted_class_name,
+                "category":predicted_category,
+                "probabilities" : {class_names[i]: 0.0 for i in range(len(class_names))},
+                "inference_time": 0.0
+            }
 
-        predictions.append(diagnosis_result)
+        predictions.append({
+            "file": filename,
+            "result": result
+        })
 
-    return jsonify(predictions)
+    # Save the patient data or perform other operations (e.g., store in MongoDB)
 
+    return jsonify({
+        'message': 'Patient data processed successfully',
+        'predictions': predictions
+    }), 200
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Get the port from the environment, default to 5000 if not set
+    port = int(os.getenv('FLASK_PORT', 5001))  # Default to 5001 if FLASK_PORT is not defined
+    app.run(debug=True, port=port)
 
 
 

@@ -1,4 +1,3 @@
-
 const multer = require('multer');
 const { apiUrl } = require('../config/dotenvConfig'); // Load environment variables
 const sharp = require('sharp');
@@ -10,7 +9,6 @@ const cloudinary = require('../config/cloudinary');
 const patientService = require('../services/patientService');
 const Patient = require('../models/Patient.Modal.js');
 
-
 // Configure multer for file uploads (in-memory storage)
 const storage = multer.memoryStorage();
 const upload = multer({
@@ -20,10 +18,8 @@ const upload = multer({
   },
 });
 
-// Define the upload directory
-const uploadDir = path.join(__dirname, '../uploads');
-console.log('Upload directory:', uploadDir); // Log path to check if it's correct
-
+// Define the upload directory relative to the root of the project
+const uploadDir = path.join(__dirname, '..', 'uploads'); // 'backend/uploads'
 
 // Ensure the upload directory exists
 if (!fs.existsSync(uploadDir)) {
@@ -52,25 +48,36 @@ exports.submitPatientData = async (req, res) => {
           .jpeg({ quality: 80 })
           .toBuffer();
 
-        const filePath = path.relative(uploadDir, fileName);
+        // Construct relative file path based on the current working directory
+        const filePath = path.relative(path.join(__dirname, '..'), path.join(uploadDir, fileName)); // Relative to root
 
         // Delete the old image if it exists
-        if (fs.existsSync(filePath)) {
-          await fs.promises.unlink(filePath); // Remove old image
+        const fullFilePath = path.join(uploadDir, fileName);
+        if (fs.existsSync(fullFilePath)) {
+          await fs.promises.unlink(fullFilePath); // Remove old image
         }
 
-        await fs.promises.writeFile(filePath, compressedBuffer);
-
+        await fs.promises.writeFile(fullFilePath, compressedBuffer);
+        console.log("filePath", filePath); // This should now be the relative path
         processedFiles.push({
           originalname: fileName,
-          path: filePath,
+          path: filePath, // Store the relative path
         });
       }
 
-      // Upload image to Cloudinary and collect the URL
+      // Send processed image to Flask API for prediction
+      const flaskResponse = await axios.post('https://skin-detection-flask.onrender.com/submit_patient_data', {
+        skinImages: processedFiles.map((file) => ({
+          path: file.path,
+          originalname: file.originalname,
+        })),
+      });
+
       const updatedFiles = [];
+
+      // Upload image to Cloudinary and collect the URL
       for (const file of processedFiles) {
-        const fileBuffer = await fs.promises.readFile(file.path);
+        const fileBuffer = await fs.promises.readFile(path.join(uploadDir, file.originalname));
 
         // Upload to Cloudinary using a stream
         const result = await new Promise((resolve, reject) => {
@@ -92,19 +99,11 @@ exports.submitPatientData = async (req, res) => {
         });
 
         updatedFiles.push({
-          imageUrl: result.secure_url, // Cloudinary URL
-          prediction: 'Pending', // Prediction can be updated after Flask API response
+          imageUrl: result.secure_url,
+          prediction: flaskResponse.data.predictions[updatedFiles.length]?.result?.predicted_class || 'Pending',
           predictionDate: new Date(),
         });
       }
-
-      // Send Cloudinary URLs to Flask API for prediction
-      const flaskResponse = await axios.post('https://skin-detection-flask.onrender.com/submit_patient_data', {
-        skinImages: updatedFiles.map((file) => ({
-          imageUrl: file.imageUrl, // Send Cloudinary image URL to Flask
-          originalname: file.originalname,
-        })),
-      });
 
       // Check if the patient already exists
       let patient = await Patient.findOne({ email: req.body.email });
@@ -129,8 +128,8 @@ exports.submitPatientData = async (req, res) => {
 
       // Cleanup: Delete all processed files
       for (const file of processedFiles) {
-        if (fs.existsSync(file.path)) {
-          await fs.promises.unlink(file.path); // Remove file
+        if (fs.existsSync(path.join(uploadDir, file.originalname))) {
+          await fs.promises.unlink(path.join(uploadDir, file.originalname)); // Remove file
         }
       }
     } catch (error) {
@@ -144,7 +143,6 @@ exports.submitPatientData = async (req, res) => {
     }
   });
 };
-
 
 // const multer = require('multer');
 // const sharp = require('sharp');
