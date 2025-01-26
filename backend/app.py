@@ -245,7 +245,8 @@ def submit_patient_data():
 if __name__ == '__main__':
     # Get the port from the environment, default to 5000 if not set
     port = int(os.getenv('FLASK_PORT', 5001))  # Default to 5001 if FLASK_PORT is not defined
-    app.run(debug=True, port=port)
+      # Run the app with appropriate settings
+    app.run(debug=False, host='0.0.0.0', port=port)
 
 
 
