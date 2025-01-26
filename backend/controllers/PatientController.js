@@ -49,7 +49,7 @@ exports.submitPatientData = async (req, res) => {
           .toBuffer();
 
         // Construct relative file path based on the current working directory
-        const filePath = path.relative(path.join(__dirname, '..'), path.join(uploadDir, fileName)); // Relative to root
+        const filePath = path.relative(path.join(__dirname, '.'), path.join(uploadDir, fileName)); // Relative to root
 
         // Delete the old image if it exists
         const fullFilePath = path.join(uploadDir, fileName);
