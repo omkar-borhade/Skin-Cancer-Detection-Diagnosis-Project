@@ -22,6 +22,8 @@ const upload = multer({
 
 // Define the upload directory
 const uploadDir = path.join(__dirname, '../uploads');
+console.log('Upload directory:', uploadDir); // Log path to check if it's correct
+
 
 // Ensure the upload directory exists
 if (!fs.existsSync(uploadDir)) {
@@ -50,7 +52,7 @@ exports.submitPatientData = async (req, res) => {
           .jpeg({ quality: 80 })
           .toBuffer();
 
-        const filePath = path.join(uploadDir, fileName);
+        const filePath = path.relative(uploadDir, fileName);
 
         // Delete the old image if it exists
         if (fs.existsSync(filePath)) {
@@ -66,7 +68,7 @@ exports.submitPatientData = async (req, res) => {
       }
 
       // Send processed image to Flask API for prediction
-      const flaskResponse = await axios.post(`${apiUrl}/submit_patient_data`, {
+      const flaskResponse = await axios.post('https://skin-detection-flask.onrender.com/submit_patient_data', {
         skinImages: processedFiles.map((file) => ({
           path: file.path,
           originalname: file.originalname,
