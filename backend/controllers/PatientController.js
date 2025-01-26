@@ -19,7 +19,7 @@ const upload = multer({
 });
 
 // Define the upload directory relative to the root of the project
-const uploadDir = path.join(__dirname, '..', 'uploads'); // 'backend/uploads'
+const uploadDir = path.join(__dirname, '..', 'backend','uploads'); // 'backend/uploads'
 
 // Ensure the upload directory exists
 if (!fs.existsSync(uploadDir)) {
@@ -49,7 +49,7 @@ exports.submitPatientData = async (req, res) => {
           .toBuffer();
 
         // Construct relative file path based on the current working directory
-        const filePath = path.relative(path.join(__dirname, '.'), path.join(uploadDir, fileName)); // Relative to root
+        const filePath = path.relative(path.join(__dirname, '..'), path.join(uploadDir, fileName)); // Relative to root
 
         // Delete the old image if it exists
         const fullFilePath = path.join(uploadDir, fileName);
