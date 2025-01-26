@@ -67,17 +67,8 @@ exports.submitPatientData = async (req, res) => {
         });
       }
 
-      // Send processed image to Flask API for prediction
-      const flaskResponse = await axios.post('https://skin-detection-flask.onrender.com/submit_patient_data', {
-        skinImages: processedFiles.map((file) => ({
-          path: file.path,
-          originalname: file.originalname,
-        })),
-      });
-
-      const updatedFiles = [];
-
       // Upload image to Cloudinary and collect the URL
+      const updatedFiles = [];
       for (const file of processedFiles) {
         const fileBuffer = await fs.promises.readFile(file.path);
 
@@ -101,11 +92,19 @@ exports.submitPatientData = async (req, res) => {
         });
 
         updatedFiles.push({
-          imageUrl: result.secure_url,
-          prediction: flaskResponse.data.predictions[updatedFiles.length]?.result?.predicted_class || 'Pending',
+          imageUrl: result.secure_url, // Cloudinary URL
+          prediction: 'Pending', // Prediction can be updated after Flask API response
           predictionDate: new Date(),
         });
       }
+
+      // Send Cloudinary URLs to Flask API for prediction
+      const flaskResponse = await axios.post('https://skin-detection-flask.onrender.com/submit_patient_data', {
+        skinImages: updatedFiles.map((file) => ({
+          imageUrl: file.imageUrl, // Send Cloudinary image URL to Flask
+          originalname: file.originalname,
+        })),
+      });
 
       // Check if the patient already exists
       let patient = await Patient.findOne({ email: req.body.email });
