@@ -55,9 +55,11 @@ except Exception as e:
     diagnosis_model = None
 
 
-# Directory to save uploaded images (we'll overwrite this image with every new upload)
-UPLOAD_FOLDER = 'uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+
+UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
 # Allowed image extensions
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
