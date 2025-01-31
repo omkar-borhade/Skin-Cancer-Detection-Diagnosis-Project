@@ -1,0 +1,45 @@
+version: '3.7'
+
+services:
+  # Backend Node.js and Flask combined service
+  backend:
+    build:
+      context: .
+      dockerfile: backend.Dockerfile
+    container_name: backend-service
+    ports:
+      - "5000:5000"  # Expose backend port (Node.js API)
+      - "5001:5001"  # Expose Flask port
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_RUN_HOST=0.0.0.0
+      - FLASK_PORT=5001
+      - MONGODB_URI=${MONGODB_URI}  # MongoDB URI
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
+      - PLACES_API_KEY=${PLACES_API_KEY}
+      - BACKEND_FLASK_API_URL=${BACKEND_FLASK_API_URL}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - DIAGNOSIS_MODEL=${DIAGNOSIS_MODEL}
+      - SKIN_NORMAL_OR_NOT=${SKIN_NORMAL_OR_NOT}
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - mongodb  # If using MongoDB
+
+  # Frontend React service
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: frontend-service
+    ports:
+      - "80:80"  # Expose React app on port 80
+    environment:
+      - VITE_API_URL=${VITE_API_URL} 
+      - VITE_PLACES_API_KEY=${VITE_PLACES_API_KEY}  
+    depends_on:
+      - backend  # Wait for backend to be ready
+

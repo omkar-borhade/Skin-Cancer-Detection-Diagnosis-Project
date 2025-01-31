@@ -31,10 +31,6 @@ app.use(nearbyRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
-app.use(express.static(path.join(_dirname,"/frontend/dist")));
-app.get('*',(req,res)=>{
-  res.sendFile(path.resolve(_dirname,"frontend","dist","index.html"))
-})
 // Start the server
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

@@ -1,0 +1,21 @@
+# Use official Node.js image as base for React
+FROM node:16 AS react-frontend
+
+# Set working directory
+WORKDIR /app
+
+# Install frontend dependencies
+COPY frontend/package.json frontend/package-lock.json ./ 
+RUN npm ci
+
+# Copy the rest of the frontend files
+COPY frontend/ .
+
+# Build the React app
+RUN npm run build
+
+# Expose the port for the frontend app
+EXPOSE 3000
+
+# Start the Node.js server to serve the React app
+CMD ["npm", "run", "start"]
