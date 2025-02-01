@@ -6,7 +6,6 @@ import numpy as np
 import requests
 import tempfile
 import time
-from concurrent.futures import ThreadPoolExecutor
 from flask import Flask, request, jsonify
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
@@ -139,9 +138,6 @@ def predict_diagnosis(image_path):
         logger.error(f"Error during prediction: {e}")
         return {"error": "Prediction error."}
 
-# Thread pool for parallel processing
-executor = ThreadPoolExecutor(max_workers=4)
-
 @app.route('/submit_patient_data', methods=['POST'])
 def submit_patient_data():
     data = request.get_json()
@@ -190,9 +186,10 @@ def submit_patient_data():
             if os.path.exists(temp_file_path):
                 os.remove(temp_file_path)
 
-    # Run parallel processing
-    results = list(executor.map(process_image, skin_images))
-    predictions.extend(results)
+    # Process the images sequentially instead of using ThreadPoolExecutor
+    for file_info in skin_images:
+        result = process_image(file_info)
+        predictions.append(result)
 
     return jsonify({'message': 'Patient data processed successfully', 'predictions': predictions}), 200
 
