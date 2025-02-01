@@ -3,15 +3,15 @@ from dotenv import load_dotenv
 import os
 import cv2
 import numpy as np
+import requests
+import tempfile
+import time
+from concurrent.futures import ThreadPoolExecutor
 from flask import Flask, request, jsonify
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
-import time
-from concurrent.futures import ThreadPoolExecutor
+from PIL import Image
 
-
-import requests
-import tempfile
 app = Flask(__name__)
 load_dotenv()
 
@@ -25,14 +25,8 @@ DIAGNOSIS_MODEL_PATH = os.getenv('DIAGNOSIS_MODEL')
 
 # Class names for diagnosis
 class_names = [
-    'Actinic Keratoses',  # akic
-    'Basal Cell Carcinoma',  # bcc
-    'Benign Keratosis-like Lesions',  # bkl
-    'Dermatofibroma',  # df
-    'Melanoma',  # mel
-    'Melanocytic Nevi',  # nv
-    'Vascular Lesions', # vsc
-    'Normal Skin'
+    'Actinic Keratoses', 'Basal Cell Carcinoma', 'Benign Keratosis-like Lesions',
+    'Dermatofibroma', 'Melanoma', 'Melanocytic Nevi', 'Vascular Lesions', 'Normal Skin'
 ]
 
 # Category mapping for cancer classification
@@ -55,24 +49,19 @@ try:
     logger.info("Diagnosis model loaded successfully.")
 except Exception as e:
     logger.error(f"Error loading models: {e}")
-    skin_normal_model = None
-    diagnosis_model = None
+    exit(1)  # Exit the application if models fail to load
 
-# Directories and allowed file extensions
-UPLOAD_FOLDER = 'uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# Allowed file extensions
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
-# Image validation functions
+# Image validation
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def is_valid_image(image_path):
     try:
         image = cv2.imread(image_path)
-        if image is None:
-            return False
-        return True
+        return image is not None
     except Exception as e:
         logger.error(f"Invalid image content: {e}")
         return False
@@ -81,12 +70,13 @@ def is_valid_image(image_path):
 def preprocess_image(image_path, target_size=(128, 128)):
     try:
         image = load_img(image_path, target_size=target_size)
+        image = image.convert('RGB')  # Ensure RGB format
         image = img_to_array(image) / 255.0
         image = np.expand_dims(image, axis=0)
         return image
     except Exception as e:
         logger.error(f"Error during image preprocessing: {e}")
-        raise
+        return None
 
 # Hair removal function
 def remove_hair(image_path):
@@ -94,20 +84,18 @@ def remove_hair(image_path):
         image = cv2.imread(image_path)
         if image is None:
             raise ValueError("Invalid image path or format.")
-        
+
         original_image = image.copy()
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (17, 17))
         blackhat = cv2.morphologyEx(gray, cv2.MORPH_BLACKHAT, kernel)
         _, hair_mask = cv2.threshold(blackhat, 10, 255, cv2.THRESH_BINARY)
         inpainted_image = cv2.inpaint(image, hair_mask, inpaintRadius=3, flags=cv2.INPAINT_NS)
-        
-        if np.array_equal(original_image, inpainted_image):
-            return None
-        return inpainted_image
+
+        return inpainted_image if not np.array_equal(original_image, inpainted_image) else None
     except Exception as e:
         logger.error(f"Error during hair removal: {e}")
-        raise
+        return None
 
 # Prediction functions
 def predict_skin_normal_or_cancerous(image_path):
@@ -115,40 +103,45 @@ def predict_skin_normal_or_cancerous(image_path):
         return {"error": "Skin normal/cancerous model not loaded."}
     try:
         image = preprocess_image(image_path, target_size=(128, 128))
+        if image is None:
+            return {"error": "Image preprocessing failed."}
+
         prediction = skin_normal_model.predict(image)
         return "Cancerous" if prediction[0] < 0.5 else "Normal"
     except Exception as e:
         logger.error(f"Error during normal/cancerous prediction: {e}")
-        return {"error": "There was an issue during the normal/cancerous prediction."}
+        return {"error": "Prediction error."}
 
 def predict_diagnosis(image_path):
     if diagnosis_model is None:
         return {"error": "Diagnosis model not loaded."}
     try:
         image = preprocess_image(image_path, target_size=(64, 64))
+        if image is None:
+            return {"error": "Image preprocessing failed."}
+
         start_time = time.time()
         prediction = diagnosis_model.predict(image)[0]
         inference_time = time.time() - start_time
         logger.info(f"Inference completed in {inference_time:.2f} seconds.")
-        
+
         predicted_class = np.argmax(prediction, axis=0)
-        probabilities = prediction
         predicted_class_name = class_names[predicted_class]
         predicted_category = categories.get(predicted_class_name, "Unknown")
 
-        result = {
+        return {
             "predicted_class": predicted_class_name,
             "category": predicted_category,
-            "probabilities": {class_names[i]: float(prob) for i, prob in enumerate(probabilities)},
+            "probabilities": {class_names[i]: float(prob) for i, prob in enumerate(prediction)},
             "inference_time": round(inference_time, 2)
         }
-        return result
     except Exception as e:
         logger.error(f"Error during prediction: {e}")
-        return {"error": "There was an issue during prediction."}
+        return {"error": "Prediction error."}
 
-# Asynchronous image processing with ThreadPoolExecutor
+# Thread pool for parallel processing
 executor = ThreadPoolExecutor(max_workers=4)
+
 @app.route('/submit_patient_data', methods=['POST'])
 def submit_patient_data():
     data = request.get_json()
@@ -158,71 +151,54 @@ def submit_patient_data():
         return jsonify({'message': 'No files received'}), 400
 
     predictions = []
-    for file_info in skin_images:
+
+    def process_image(file_info):
         file_url = file_info['url']
         filename = file_info['originalname']
 
         try:
-            # Download the image from the URL
             response = requests.get(file_url, stream=True)
             if response.status_code != 200:
-                return jsonify({'message': f'Failed to download image {filename}'}), 400
+                return {'message': f'Failed to download image {filename}'}, 400
 
-            # Save the image to a temporary file
             with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as temp_file:
                 temp_file.write(response.content)
                 temp_file_path = temp_file.name
 
             if not allowed_file(filename) or not is_valid_image(temp_file_path):
-                logger.warning(f"Invalid file or image content for {filename}.")
-                return jsonify({'message': f'Invalid image file content for {filename}'}), 400
+                return {'message': f'Invalid image file content for {filename}'}, 400
 
-            try:
-                processed_image = remove_hair(temp_file_path)
-                if processed_image is None:
-                    processed_image = cv2.imread(temp_file_path)
-            except Exception as e:
-                logger.error(f"Error processing file {filename}: {e}")
-                return jsonify({'message': f'Error processing file {filename}: {e}'}), 500
+            processed_image = remove_hair(temp_file_path)
+            if processed_image is None:
+                processed_image = cv2.imread(temp_file_path)
 
-            # Prediction logic (cancerous check first)
             skin_status = predict_skin_normal_or_cancerous(temp_file_path)
 
             if skin_status == "Cancerous":
                 result = predict_diagnosis(temp_file_path)
             else:
-                predicted_class_name = 'Normal Skin'
-                predicted_category = categories.get(predicted_class_name, "Unknown")
-                probabilities = {class_name: 0.0 for class_name in class_names}
-                probabilities['Normal Skin'] = 1.0  # Set Normal Skin to 100%
                 result = {
-                    "predicted_class": predicted_class_name,
-                    "category": predicted_category,
-                    "probabilities": probabilities,
+                    "predicted_class": "Normal Skin",
+                    "category": categories["Normal Skin"],
+                    "probabilities": {class_name: 0.0 for class_name in class_names},
                     "inference_time": 0.0
                 }
+                result["probabilities"]["Normal Skin"] = 1.0  # 100% confidence for normal skin
 
-            predictions.append({
-                "file": filename,
-                "result": result
-            })
-
+            return {"file": filename, "result": result}
         finally:
-            # Clean up the temporary file
             if os.path.exists(temp_file_path):
                 os.remove(temp_file_path)
 
-    return jsonify({
-        'message': 'Patient data processed successfully',
-        'predictions': predictions
-    }), 200
+    # Run parallel processing
+    results = list(executor.map(process_image, skin_images))
+    predictions.extend(results)
 
+    return jsonify({'message': 'Patient data processed successfully', 'predictions': predictions}), 200
 
 if __name__ == '__main__':
-    # Get the port from the environment, default to 5000 if not set
-    port = int(os.getenv('FLASK_PORT', 5001))  # Default to 5001 if FLASK_PORT is not defined
+    port = int(os.getenv('FLASK_PORT', 5001))
     app.run(debug=True, port=port)
-
 
 
 
