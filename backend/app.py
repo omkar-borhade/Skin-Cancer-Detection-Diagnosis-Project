@@ -137,6 +137,9 @@ def predict_diagnosis(image_path):
     except Exception as e:
         logger.error(f"Error during prediction: {e}")
         return {"error": "Prediction error."}
+@app.route('/')
+def home():
+    return "Welcome to the Skin Cancer Detection API"
 
 @app.route('/submit_patient_data', methods=['POST'])
 def submit_patient_data():
