@@ -57,5 +57,8 @@ This project aims to develop a **Skin Cancer Detection and Diagnosis** applicati
 
 ## Demo  
 
-🎥 [Watch the demo video](video/demo.mp4)  
+## Demo  
+
+[🎥 Watch the demo video][(YOUR_GOOGLE_DRIVE_LINK](https://drive.google.com/file/d/1lFTwMIvHTDQS-nS65WJHkf5bEIfn5ITI/view?usp=sharing))
+
    
