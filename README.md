@@ -53,3 +53,9 @@ This project aims to develop a **Skin Cancer Detection and Diagnosis** applicati
 
    ```bash
    git clone https://github.com/omkar-borhade/Skin-Cancer-Detection-Diagnosis-Project.git
+
+
+## Demo  
+
+🎥 [Watch the demo video](video/demo.mp4)  
+   
