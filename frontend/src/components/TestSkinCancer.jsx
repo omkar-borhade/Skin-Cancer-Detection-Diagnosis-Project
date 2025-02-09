@@ -4,7 +4,7 @@ import FormBG from '/image/FormBG.jpg'; // Adjust the path as necessary
 import axios from 'axios'; // Import Axios
 import { useNavigate,useLocation } from 'react-router-dom'; // Import useNavigate from react-router-dom
 import ReCAPTCHA from 'react-google-recaptcha'; // Import reCAPTCHA
-
+const reCAPTCHA = import.meta.env.VITE_RECAPTCHA
 function TestSkinCancer() {
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -470,7 +470,7 @@ function TestSkinCancer() {
           {/* Google reCAPTCHA */}
           <div className="mb-3">
             <ReCAPTCHA
-              sitekey="6LceDGIqAAAAADrHzceCTMGzQfNouvz-i2S0Kus3" // Replace with your site key
+              sitekey={reCAPTCHA} // Replace with your site key
               onChange={onCaptchaChange}
             />
           </div>
