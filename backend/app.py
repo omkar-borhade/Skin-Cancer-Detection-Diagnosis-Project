@@ -13,6 +13,9 @@ import tempfile
 app = Flask(__name__)
 load_dotenv()
 
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Suppresses warnings (info and debug messages remain)
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
