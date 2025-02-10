@@ -27,8 +27,6 @@ const uploadDir = path.join(__dirname, 'backend', 'uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
-
-// Function to handle patient data submission
 exports.submitPatientData = async (req, res) => {
   upload.array('skinImages', 1)(req, res, async (err) => {  // Limit to 1 file upload
     if (err) {
@@ -40,9 +38,10 @@ exports.submitPatientData = async (req, res) => {
     }
 
     try {
-      const processedFiles = [];
+      const uploadedFiles = [];
+
       for (const file of req.files) {
-        const fileName = file.originalname; // Keep the original file name
+        const fileName = file.originalname;
 
         // Process image using Sharp
         const compressedBuffer = await sharp(file.buffer)
@@ -50,36 +49,7 @@ exports.submitPatientData = async (req, res) => {
           .jpeg({ quality: 80 })
           .toBuffer();
 
-        const filePath = path.join(uploadDir, fileName);
-
-        // Delete the old image if it exists
-        if (fs.existsSync(filePath)) {
-          await fs.promises.unlink(filePath); // Remove old image
-        }
-
-        await fs.promises.writeFile(filePath, compressedBuffer);
-
-        processedFiles.push({
-          originalname: fileName,
-          path: filePath,
-        });
-      }
-
-      // Send processed image to Flask API for prediction
-      const flaskResponse = await axios.post(`${apiUrl}/submit_patient_data`, {
-        skinImages: processedFiles.map((file) => ({
-          path: file.path,
-          originalname: file.originalname,
-        })),
-      });
-
-      const updatedFiles = [];
-
-      // Upload image to Cloudinary and collect the URL
-      for (const file of processedFiles) {
-        const fileBuffer = await fs.promises.readFile(file.path);
-
-        // Upload to Cloudinary using a stream
+        // Upload image to Cloudinary
         const result = await new Promise((resolve, reject) => {
           const uploadStream = cloudinary.uploader.upload_stream(
             { resource_type: 'auto' },
@@ -94,25 +64,37 @@ exports.submitPatientData = async (req, res) => {
           );
 
           const bufferStream = new stream.PassThrough();
-          bufferStream.end(fileBuffer);
+          bufferStream.end(compressedBuffer);
           bufferStream.pipe(uploadStream);
         });
 
-        updatedFiles.push({
+        uploadedFiles.push({
           imageUrl: result.secure_url,
-          prediction: flaskResponse.data.predictions[updatedFiles.length]?.result?.predicted_class || 'Pending',
-          predictionDate: new Date(),
+          originalname: fileName,
         });
       }
+
+      // Send Cloudinary URLs to Flask API for prediction
+      const flaskResponse = await axios.post(`${apiUrl}/submit_patient_data`, {
+        skinImages: uploadedFiles.map((file) => ({
+          url: file.imageUrl,  // Send Cloudinary URL instead of file path
+          originalname: file.originalname,
+        })),
+      });
+
+      // Format prediction results
+      const updatedFiles = uploadedFiles.map((file, index) => ({
+        imageUrl: file.imageUrl,
+        prediction: flaskResponse.data.predictions[index]?.result?.predicted_class || 'Pending',
+        predictionDate: new Date(),
+      }));
 
       // Check if the patient already exists
       let patient = await Patient.findOne({ email: req.body.email });
 
       if (patient) {
-        // Replace the skin image with the new one
         patient.skinImages = updatedFiles;
       } else {
-        // Create new patient data
         const patientData = await patientService.createPatient(req.body, updatedFiles);
         patient = new Patient(patientData);
       }
@@ -120,18 +102,11 @@ exports.submitPatientData = async (req, res) => {
       // Save the updated or new patient data
       await patient.save();
 
-      // Respond with the prediction result from Flask
       res.status(201).json({
         prediction: flaskResponse.data,
         patient,
       });
 
-      // Cleanup: Delete all processed files
-      for (const file of processedFiles) {
-        if (fs.existsSync(file.path)) {
-          await fs.promises.unlink(file.path); // Remove file
-        }
-      }
     } catch (error) {
       if (error.name === 'ValidationError') {
         const errors = Object.values(error.errors).map((err) => err.message);
