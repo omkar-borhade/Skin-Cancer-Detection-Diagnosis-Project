@@ -75,7 +75,7 @@ exports.submitPatientData = async (req, res) => {
       }
 
       // Send Cloudinary URLs to Flask API for prediction
-      const flaskResponse = await axios.post('https://skin-detection-flask.onrender.com/submit_patient_data', {
+      const flaskResponse = await axios.post(`${apiUrl}/submit_patient_data`, {
         skinImages: uploadedFiles.map((file) => ({
           url: file.imageUrl,  // Send Cloudinary URL instead of file path
           originalname: file.originalname,
