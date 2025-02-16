@@ -154,6 +154,9 @@ def predict_diagnosis(image_path):
         logger.error(f"Error during prediction: {e}")
         return {"error": "There was an issue during prediction."}
 
+@app.route('/')
+def home():
+    return "Hello, Flask is running!"
 # Asynchronous image processing with ThreadPoolExecutor
 executor = ThreadPoolExecutor(max_workers=4)
 @app.route('/submit_patient_data', methods=['POST'])
@@ -235,6 +238,5 @@ def submit_patient_data():
 
 
 if __name__ == '__main__':
-    # Get the port from the environment, default to 5000 if not set
-    port = int(os.getenv('FLASK_PORT', 5001))  # Default to 5001 if FLASK_PORT is not defined
-    app.run(debug=True, port=port)
+   port = int(os.environ.get('PORT', 5001))  # Render provides a PORT dynamically
+   app.run(debug=False, host='0.0.0.0', port=port)

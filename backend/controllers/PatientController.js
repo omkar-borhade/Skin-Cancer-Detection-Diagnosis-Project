@@ -71,7 +71,7 @@ exports.submitPatientData = async (req, res) => {
         uploadedFiles.push({
           imageUrl: result.secure_url,
           originalname: fileName,
-        });
+        }); 
       }
 
       // Send Cloudinary URLs to Flask API for prediction
