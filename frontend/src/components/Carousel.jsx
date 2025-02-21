@@ -1,60 +1,49 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux'; // Import Redux hook
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const media = [
   '/image/image1.jpg',
-  'https://www.mocindia.co.in/uploads/images/video_home.mp4', // Video URL
+  'https://www.mocindia.co.in/uploads/images/video_home.mp4',
   '/image/image3.jpg'
 ];
 
 function Carousel() {
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn); // Get login status from Redux
-  const [currentIndex, setCurrentIndex] = useState(0); // State for current media index
-  const [fade, setFade] = useState(false); // State for smooth fade effect
-  const [isDarkMode, setIsDarkMode] = useState(false); // State for theme toggle
-  const [buttonColor, setButtonColor] = useState('bg-pink-500'); // State for button color toggle
-
-  // Check if the user prefers dark mode
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    setIsDarkMode(mediaQuery.matches);
-
-    const handleChange = (e) => {
-      setIsDarkMode(e.matches);
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
-
-  // Function to toggle button color
-  useEffect(() => {
-    const colorToggleInterval = setInterval(() => {
-      setButtonColor((prevColor) =>
-        prevColor === 'bg-pink-400' ? 'bg-pink-600' : 'bg-pink-400'
-      );
-    }, 400); // Change color every 1.5 seconds
-
-    return () => clearInterval(colorToggleInterval); // Cleanup the interval on component unmount
-  }, []);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [fade, setFade] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setFade(true); // Trigger fade out effect
+      setFade(true);
       setTimeout(() => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % media.length); // Change media
-        setFade(false); // Reset fade for fade in effect
-      }, 500); // Fade out for 500ms before changing
-    }, currentIndex === 1 ? 7000 : 3000); // 7 seconds for video, 3 seconds for images
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % media.length);
+        setFade(false);
+      }, 500);
+    }, currentIndex === 1 ? 7000 : 3000);
 
-    return () => clearInterval(intervalId); // Cleanup on component unmount
-  }, [currentIndex]); // Add currentIndex as a dependency
+    return () => clearInterval(intervalId);
+  }, [currentIndex]);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleContinue = () => {
+    setIsModalOpen(false);
+    navigate("/test-skin-cancer");
+  };
 
   return (
     <div className="relative w-full">
       <div className={`transition-opacity duration-700 ${fade ? 'opacity-0' : 'opacity-100'}`}>
-        {currentIndex === 1 ? ( // Check if current index is for video
+        {currentIndex === 1 ? (
           <video
             src={media[currentIndex]}
             autoPlay
@@ -72,27 +61,57 @@ function Carousel() {
       </div>
 
       <div className="absolute inset-0 flex flex-col justify-center items-center sm:items-start p-4 sm:pl-32">
-        <h2 className="text-4xl sm:text-6xl font-bold text-blue-600 text-center sm:text-left">Care you can trust</h2>
-        <p className="text-lg sm:text-xl text-gray-900 text-center sm:text-left">Convenient access to quality healthcare.</p>
+        <h2 className="text-4xl sm:text-6xl font-bold text-blue-600 text-center sm:text-left">
+          Care You Can Trust
+        </h2>
+        <p className="text-lg sm:text-xl text-gray-900 text-center sm:text-left">
+          Convenient access to quality healthcare.
+        </p>
 
         {isLoggedIn ? (
-          <Link to="/test-skin-cancer">
-            <button 
-              className={`mt-4 px-4 py-2 rounded-lg transition duration-200 ${buttonColor} text-white`}
-            >
-              Test Your Skin
-            </button>
-          </Link>
+          <button
+            className="mt-4 px-6 py-3 rounded-lg bg-pink-500 text-white text-lg font-semibold transition-all duration-300 ease-in-out transform hover:bg-pink-600 hover:scale-105 animate-pulse"
+            onClick={handleOpenModal}
+          >
+            Test Your Skin
+          </button>
         ) : (
           <Link to="/login?redirect=/test-skin-cancer">
-            <button 
-              className={`mt-4 px-4 py-2 rounded-lg transition duration-200 ${buttonColor} text-white`}
-            >
+            <button className="mt-4 px-6 py-3 rounded-lg bg-pink-500 text-white text-lg font-semibold transition-all duration-300 ease-in-out transform hover:bg-pink-600 hover:scale-105 animate-pulse">
               Login to Test Skin
             </button>
           </Link>
         )}
       </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg transform transition-all duration-300 ease-in-out scale-95 animate-fadeIn">
+            <h3 className="text-2xl font-bold mb-3 text-blue-600">📸 Image & Camera Instructions</h3>
+            <ul className="list-disc ml-5 text-gray-700 space-y-2">
+              <li>📷 Ensure good lighting for clear skin images.</li>
+              <li>📏 Hold the camera <span className="font-semibold text-blue-500">15-20 cm away</span> from the skin.</li>
+              <li>☀️ Avoid shadows and reflections.</li>
+              <li>🔍 Ensure the affected area is fully visible.</li>
+              <li>🖼️ Use a <span className="font-semibold text-blue-500">plain background</span> for better accuracy.</li>
+            </ul>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={handleCloseModal}
+                className="px-4 py-2 mr-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleContinue}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -21,28 +21,41 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow">
+    <nav className="bg-white shadow-md">
       <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-        <div className="flex items-center space-x-6"> {/* Increased space-x-3 to space-x-6 for more gap */}
-          <img src="/image/Logo.png" alt="Logo" className="h-8 w-8" />
-          <h1 className="text-xl font-bold">Skin Cancer Detection</h1>
+        <div className="flex items-center space-x-6">
+          <img src="/image/Logo.png" alt="Logo" className="h-10 w-10" />
+          <h1 className="text-xl font-bold text-gray-800">Skin Cancer Detection</h1>
         </div>
 
         <div className="flex items-center space-x-4">
-          <div className="hidden md:flex space-x-4">
-            <Link to="/" className="text-gray-700 hover:text-blue-500">Home</Link>
-            <Link to="/about" className="text-gray-700 hover:text-blue-500">About</Link>
-            <Link to="/nearby" className="text-gray-700 hover:text-blue-500">Near By Hospital</Link>
+          <div className="hidden md:flex space-x-6">
+            <Link to="/" className="text-gray-700 px-3 py-2 rounded-md hover:border hover:border-blue-500 hover:shadow-md transition-all">
+              Home
+            </Link>
+            <Link to="/about" className="text-gray-700 px-3 py-2 rounded-md hover:border hover:border-blue-500 hover:shadow-md transition-all">
+              About
+            </Link>
+            <Link to="/nearby" className="text-gray-700 px-3 py-2 rounded-md hover:border hover:border-blue-500 hover:shadow-md transition-all">
+              Near By Hospital
+            </Link>
 
             {isLoggedIn ? (
               <>
-                <Link to="/profile" className="text-gray-700 hover:text-blue-500">Profile</Link>
-                <button onClick={handleLogout} className="text-gray-700 hover:text-blue-500">
+                <Link to="/profile" className="text-gray-700 px-3 py-2 rounded-md hover:border hover:border-blue-500 hover:shadow-md transition-all">
+                  Profile
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="text-gray-700 px-3 py-2 rounded-md hover:border hover:border-red-500 hover:shadow-md transition-all"
+                >
                   Logout
                 </button>
               </>
             ) : (
-              <Link to="/login" className="text-gray-700 hover:text-blue-500">Login</Link>
+              <Link to="/login" className="text-gray-700 px-3 py-2 rounded-md hover:border hover:border-blue-500 hover:shadow-md transition-all">
+                Login
+              </Link>
             )}
           </div>
 
@@ -62,19 +75,32 @@ function Navbar() {
 
       {/* Mobile Menu (Hidden on larger screens) */}
       <div className={`md:hidden bg-white shadow-md space-y-4 px-4 py-2 ${isMenuOpen ? 'block' : 'hidden'}`}>
-        <Link to="/" className="text-gray-700 hover:text-blue-500 block">Home</Link>
-        <Link to="/about" className="text-gray-700 hover:text-blue-500 block">About</Link>
-        <Link to="/nearby" className="text-gray-700 hover:text-blue-500 block">Near By Hospital</Link>
+        <Link to="/" className="text-gray-700 block px-3 py-2 rounded-md hover:border hover:border-blue-500 hover:shadow-md transition-all">
+          Home
+        </Link>
+        <Link to="/about" className="text-gray-700 block px-3 py-2 rounded-md hover:border hover:border-blue-500 hover:shadow-md transition-all">
+          About
+        </Link>
+        <Link to="/nearby" className="text-gray-700 block px-3 py-2 rounded-md hover:border hover:border-blue-500 hover:shadow-md transition-all">
+          Near By Hospital
+        </Link>
         
         {isLoggedIn ? (
           <>
-            <Link to="/profile" className="text-gray-700 hover:text-blue-500 block">Profile</Link>
-            <button onClick={handleLogout} className="text-gray-700 hover:text-blue-500 block">
+            <Link to="/profile" className="text-gray-700 block px-3 py-2 rounded-md hover:border hover:border-blue-500 hover:shadow-md transition-all">
+              Profile
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="text-gray-700 block px-3 py-2 rounded-md hover:border hover:border-red-500 hover:shadow-md transition-all"
+            >
               Logout
             </button>
           </>
         ) : (
-          <Link to="/login" className="text-gray-700 hover:text-blue-500 block">Login</Link>
+          <Link to="/login" className="text-gray-700 block px-3 py-2 rounded-md hover:border hover:border-blue-500 hover:shadow-md transition-all">
+            Login
+          </Link>
         )}
       </div>
     </nav>
