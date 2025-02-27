@@ -1,5 +1,5 @@
 
-tensorflow==2.13.0
+tensorflow==2.16.0  
 tensorflow-io-gcs-filesystem==0.31.0
 tensorflow-metadata==1.16.1
 tensorflow-datasets==4.9.7
