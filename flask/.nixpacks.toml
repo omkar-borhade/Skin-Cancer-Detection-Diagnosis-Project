@@ -1,8 +1,5 @@
 [phases.setup]
-aptPkgs = ["python3", "python3-pip"]
+nixPkgs = ["python310"]
 
 [phases.build]
 cmds = ["pip install --no-cache-dir -r requirements.txt"]
-
-[phases.start]
-cmds = ["python app.py"]
