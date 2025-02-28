@@ -237,5 +237,4 @@ def submit_patient_data():
     }), 200
 
 
-if __name__ == '__main__':
-   app.run(debug=False)
+
