@@ -26,6 +26,10 @@ dist-ssr
 .env
 *.env
 env*
+venv/
+.venv/
+venv/*
+
 
 
 
@@ -38,3 +42,4 @@ scripts/
 uploads/
 
 node_modules/
+flask/venv/
