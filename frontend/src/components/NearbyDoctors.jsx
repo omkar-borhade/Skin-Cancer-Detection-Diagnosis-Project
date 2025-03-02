@@ -3,7 +3,11 @@ import axios from 'axios';
 import DermatologistCard from './DermatologistCard';
 
 const NearbyDoctors = () => {
-  const apiUrl = import.meta.env.VITE_API_URL;
+  // const apiUrl = import.meta.env.VITE_API_URL;
+  const apiUrl =
+  window.location.hostname === "localhost"
+    ? import.meta.env.VITE_API_URL
+    : import.meta.env.VITE_API_MOBILE;
 
   const [loading, setLoading] = useState(true);
   const [dermatologists, setDermatologists] = useState([]);

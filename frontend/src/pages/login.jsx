@@ -6,7 +6,12 @@ import { useDispatch } from 'react-redux';
 import { loginSuccess } from '../features/auth/authSlice'; // Import loginSuccess action
 
 function Login() {
-  const apiUrl = import.meta.env.VITE_API_URL;
+  // const apiUrl = import.meta.env.VITE_API_URL;
+  const apiUrl =
+  window.location.hostname === "localhost"
+    ? import.meta.env.VITE_API_URL
+    : import.meta.env.VITE_API_MOBILE;
+
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

@@ -7,14 +7,20 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import confirmationbg from '/image/confirnmationbg.jpg';
 const Confirmation = () => {
-const apiUrl = import.meta.env.VITE_API_URL;
+// const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl =
+  window.location.hostname === "localhost"
+    ? import.meta.env.VITE_API_URL
+    : import.meta.env.VITE_API_MOBILE;
 
+    
+console.log("aa",apiUrl)
   const location = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [isImageValid, setIsImageValid] = useState(true); // State to track if the image is valid
   const formData = location.state;
-
+  
   const isSkinPixelMethod1 = (r, g, b) => {
     const y = 0.299 * r + 0.587 * g + 0.114 * b;
     const cb = 128 - 0.168736 * r - 0.331264 * g + 0.5 * b;

@@ -8,7 +8,7 @@ import './index.css';
 
 // Dynamically load the Google Maps API script
 const apiKey = import.meta.env.VITE_PLACES_API_KEY;
-console.log("Google Maps API Key:", apiKey);
+
 const loadGoogleMapsScript = () => {
   const scriptTag = document.getElementById('google-maps-api');
   
@@ -16,8 +16,8 @@ const loadGoogleMapsScript = () => {
   if (scriptTag && apiKey) {
     scriptTag.async = true;
     scriptTag.defer = true;
-    scriptTag.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
-    
+    scriptTag.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&loading=async`;
+    // &loading=async      remove  if give error
   } else {
     console.error('Google Maps API key is missing!');
   }

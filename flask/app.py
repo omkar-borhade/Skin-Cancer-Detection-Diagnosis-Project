@@ -10,6 +10,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 import requests
 import tempfile
+import numpy as np 
 app = Flask(__name__)
 load_dotenv()
 
@@ -208,17 +209,28 @@ def submit_patient_data():
                 except Exception as e:
                     logger.error(f"Error processing file {filename}: {e}")
                     return jsonify({'message': f'Error processing file {filename}: {e}'}), 500
-            else:
+
+            elif skin_status == "Normal":
                 # If normal, no need to apply hair removal, just return normal result
                 predicted_class_name = 'Normal Skin'
                 predicted_category = categories.get(predicted_class_name, "Unknown")
                 probabilities = {class_name: 0.0 for class_name in class_names}
                 probabilities['Normal Skin'] = 1.0  # Set Normal Skin to 100%
+                
                 result = {
                     "predicted_class": predicted_class_name,
                     "category": predicted_category,
                     "probabilities": probabilities,
                     "inference_time": 0.0
+                }
+
+            else:
+                # If skin_status is neither "Cancerous" nor "Normal", assign NaN values
+                result = {
+                    "predicted_class": "Unknown",
+                    "category": "Unknown",
+                    "probabilities": {class_name: 0.0 for class_name in class_names},
+                    "inference_time":0.0
                 }
 
             predictions.append({
@@ -239,4 +251,4 @@ def submit_patient_data():
 
 if __name__ == '__main__':
    port = int(os.environ.get('PORT', 5001))  # Render provides a PORT dynamically
-   app.run(debug=False, host='0.0.0.0', port=port)
+   app.run(debug=True, host='0.0.0.0', port=port)

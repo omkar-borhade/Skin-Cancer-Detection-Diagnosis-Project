@@ -67,6 +67,7 @@ const TestResults = () => {
 
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: false, 
     plugins: {
       title: {
         display: true,
@@ -75,6 +76,9 @@ const TestResults = () => {
         color: '#374151',
       },
       tooltip: {
+        enabled: true,
+        mode: 'nearest', // Ensures tooltips appear even on zero values
+        intersect: false, // Ensures tooltips show even when hovering nearby
         callbacks: {
           label: function (tooltipItem) {
             const percentage = (tooltipItem.raw * 100).toFixed(2);
@@ -83,11 +87,17 @@ const TestResults = () => {
         },
       },
     },
+    interaction: {
+      mode: 'nearest', // Ensures hover effect is triggered properly
+      axis: 'x', // Allows hovering anywhere on the x-axis to trigger tooltip
+      intersect: false,
+    },
     scales: {
       y: {
         beginAtZero: true,
         max: 1,
         ticks: {
+          stepSize: 0.2,
           callback: function (value) {
             return `${(value * 100).toFixed(0)}%`;
           },
@@ -95,6 +105,8 @@ const TestResults = () => {
       },
     },
   };
+  
+
 
   // Determine whether the result is cancerous, pre-cancerous, or non-cancerous
   const categorizePrediction = (className) => {
@@ -166,9 +178,10 @@ const TestResults = () => {
             <p className="text-gray-600 mb-4">
               <strong>Category:</strong> {categorizePrediction(predicted_class)}
             </p>
-            <div className="mb-6">
-              <Bar data={chartData} options={chartOptions} />
-            </div>
+            <div className=" md:p-6 mb-6 w-full h-[50vh] min-h-[300px] max-h-[600px]">
+  <Bar data={chartData} options={chartOptions} />
+</div>
+
             <div className="text-center">
               <button
                 onClick={handleGenerateReport}
