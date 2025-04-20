@@ -106,7 +106,9 @@
                     setPdfData(pdfBlob);
 
                     // Upload with patient ID as filename
+                    // uploadToGitHub(pdfBlob, `Report_${_id}.pdf`, setDownloadUrl);
                     uploadToGitHub(pdfBlob, "Report.pdf", setDownloadUrl);
+
 
                 });
             }, 3000);
@@ -244,18 +246,36 @@ AI-Powered Skin Health Monitoring
       labels: Object.keys(prediction[0].result.probabilities),
       datasets: [
         {
-          label: 'Prediction Probability (%)',
+          label: "Prediction Probability (%)",
           data: Object.values(prediction[0].result.probabilities).map((prob) => (prob * 100).toFixed(2)),
-          backgroundColor: 'rgba(75, 192, 192, 0.5)', // Light teal
-          borderColor: 'rgba(75, 192, 192, 1)', // Darker teal
+          backgroundColor: "rgba(75, 192, 192, 0.5)", // Light teal
+          borderColor: "rgba(75, 192, 192, 1)", // Darker teal
           borderWidth: 1,
         },
       ],
     };
-
+  
     const chartOptions = {
       responsive: true,
       maintainAspectRatio: false,
+      scales: {
+        x: {
+          ticks: {
+            callback: function (value, index, values) {
+              const className = fullChartData.labels[index];
+              const probability = fullChartData.datasets[0].data[index];
+              return `${className}\n(${probability}%)`; // Name + Percentage below
+            },
+          },
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: "Probability (%)",
+          },
+        },
+      },
     };
   console.log("id",_id)
     return (
