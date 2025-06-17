@@ -4,6 +4,7 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const patientRoutes = require('./routes/PatientRoutes');
 const nearbyRoutes = require('./routes/nearbyRoutes');
+const uploadRoutes = require('./routes/githubRoutes.js');
 const userRoutes = require('./routes/userRoutes'); // Make sure to import user routes
 const { port, FRONTEND } = require('./config/dotenvConfig');
 const errorHandler = require('./middlewares/errorHandler');
@@ -20,14 +21,21 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+
 
 // Routes
 app.use('/api', userRoutes);     // Register user routes
 app.use('/api', patientRoutes);  // Register patient routes
 // app.use('/api', patientRoutes);  // Register patient routes
 app.use(nearbyRoutes);
+
+
+app.use('/api', uploadRoutes);
+
+
 
 // Error handling middleware
 app.use(errorHandler);
